@@ -1,0 +1,10 @@
+{
+  "dependencies": [],
+  "devDependencies": [
+    "@types/jest",
+    "@types/node",
+    "jest",
+    "ts-jest",
+    "typescript"
+  ]
+}

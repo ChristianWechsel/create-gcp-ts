@@ -1,0 +1,7 @@
+project_id             = "your-gcp-project-id"
+region                 = "europe-west3"
+github_connection_name = "your-github-connection"
+github_repo_name       = "your-repo-name"
+gcp_repository_name    = "your-cloudbuild-repo-resource-name"
+target_branch          = "main"
+npm_repository_id      = "shared-npm-repo"

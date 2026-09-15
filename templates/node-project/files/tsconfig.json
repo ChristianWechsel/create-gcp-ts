@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        // 1. Ordner-Struktur
+        "rootDir": "./src",
+        "outDir": "./dist",
+        // 2. Node.js Environment (Modern)
+        "module": "nodenext",
+        "target": "esnext",
+        // 3. Typisierungen
+        "lib": [
+            "esnext"
+        ],
+        "types": [
+            "node",
+            "jest"
+        ],
+        // 4. Output-Generierung
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+        // 5. Strikte Typenprüfung
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": true,
+        // 6. Moderne Compiler-Regeln für Vorhersehbarkeit
+        "verbatimModuleSyntax": true,
+        "isolatedModules": true,
+        "noUncheckedSideEffectImports": true,
+        "moduleDetection": "force",
+        // 7. Performance
+        "skipLibCheck": true
+    },
+    // 8. Dateien einschließen / ausschließen
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

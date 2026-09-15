@@ -1,0 +1,38 @@
+steps:
+  # 1. Saubere Installation (Nutzt das funktionierende 'npm ci' + modernes Node 22)
+  - name: "node:24"
+    entrypoint: "npm"
+    args: ["ci"]
+
+  # 2. Tests ausführen
+  - name: "node:24"
+    entrypoint: "npm"
+    args: ["test"]
+
+  # 3. Paket veröffentlichen
+  - name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        set -e
+        # 1. Token mittels gcloud generieren (der SA hat ja jetzt die Berechtigungen)
+        TOKEN=$(gcloud auth print-access-token)
+        # 2. Basic Auth String (Base64) generieren, wie es GAR erfordert
+        AUTH_B64=$(echo -n "oauth2accesstoken:$${TOKEN}" | base64 | tr -d '\n')
+
+        # 3. Eine dedizierte, saubere config anlegen. WICHTIG: Die URL *muss* mit einem Trailing-Slash enden!
+        echo "@<SCOPE>:registry=https://<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/" > /workspace/.npmrc-publish
+        echo "//<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/:_auth=$${AUTH_B64}" >> /workspace/.npmrc-publish
+        echo "//<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/:always-auth=true" >> /workspace/.npmrc-publish
+        echo "//<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/:email=not.valid@example.com" >> /workspace/.npmrc-publish
+
+  - name: "node:24"
+    entrypoint: "npm"
+    args:
+      - "publish"
+    env:
+      - "NPM_CONFIG_USERCONFIG=/workspace/.npmrc-publish"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

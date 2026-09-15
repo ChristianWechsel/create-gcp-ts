@@ -1,0 +1,54 @@
+{
+  "name": "@christian-wechsel/create-gcp-ts",
+  "version": "0.1.0",
+  "description": "CLI to scaffold TypeScript projects for Google Cloud.",
+  "keywords": [
+    "create",
+    "cli",
+    "scaffold",
+    "generator",
+    "boilerplate",
+    "template",
+    "typescript",
+    "gcp",
+    "google-cloud",
+    "cloud-functions",
+    "cloud-run",
+    "serverless",
+    "node",
+    "npm-package"
+  ],
+  "homepage": "https://github.com/ChristianWechsel/create-gcp-ts#readme",
+  "bugs": {
+    "url": "https://github.com/ChristianWechsel/create-gcp-ts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristianWechsel/create-gcp-ts.git"
+  },
+  "license": "MIT",
+  "author": "Christian Wechsel <npm@christian-wechsel.com>",
+  "type": "module",
+  "bin": {
+    "create-gcp-ts": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "clean": "./bin/clean.sh",
+    "prebuild": "npm run clean",
+    "build": "tsc --project tsconfig.json",
+    "debug": "node --inspect-brk dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "typescript": "^7.0.2"
+  }
+}

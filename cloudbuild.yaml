@@ -1,11 +1,11 @@
 steps:
   - name: "node:24"
     entrypoint: "npm"
-    args: ["install"]
+    args: ["audit", "--audit-level=high"]
 
   - name: "node:24"
     entrypoint: "npm"
-    args: ["audit", "--audit-level=high"]
+    args: ["ci"]
 
   - name: "node:24"
     entrypoint: "npm"

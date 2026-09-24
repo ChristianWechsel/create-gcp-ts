@@ -1,11 +1,15 @@
 steps:
   - name: "node:24"
     entrypoint: "npm"
+    args: ["install"]
+
+  - name: "node:24"
+    entrypoint: "npm"
     args: ["audit", "--audit-level=high"]
 
   - name: "node:24"
     entrypoint: "npm"
-    args: ["ci"]
+    args: ["run", "build"]
 
   - name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"

@@ -1,0 +1,21 @@
+{
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "files[0]": "dist",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts.clean": "./bin/clean.sh",
+  "scripts.prebuild": "npm run clean",
+  "scripts.build": "tsc --project tsconfig.json",
+  "scripts.prebuild-test": "npm run clean",
+  "scripts.build-test": "tsc --project tsconfig.test.json",
+  "scripts.prebuild-prod": "npm run clean",
+  "scripts.build-prod": "tsc --project tsconfig.prod.json",
+  "scripts.prepublishOnly": "npm run build-prod",
+  "scripts.test:unit": "set NODE_ENV=test && npm run build-test && jest --selectProjects Unit",
+  "scripts.test:int": "set NODE_ENV=test && npm run build-test && jest --selectProjects Integration",
+  "scripts.test": "npm run build-test && jest",
+  "scripts.debug": "node --inspect-brk dist/index.js",
+  "scripts.start": "node dist/index.js"
+}

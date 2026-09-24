@@ -8,12 +8,17 @@ export function typeSelection() {
       {
         name: "node-project",
         value: "node-project",
-        description: "TypeScript-Bibliothek",
+        description: "Node.js-project",
+      },
+      {
+        name: "lib",
+        value: "lib",
+        description: "TypeScript-library",
       },
       {
         name: "server",
         value: "server",
-        description: "Server-Anwendung",
+        description: "Server",
       },
     ],
   });

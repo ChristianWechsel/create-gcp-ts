@@ -1,4 +1,4 @@
-export type ProjectType = "node-project" | "server";
+export type ProjectType = "node-project" | "lib" | "server";
 export type Template = {
   name: string;
   type: ProjectType;

@@ -1,6 +1,6 @@
 # @christian-wechsel/create-gcp-ts
 
-CLI to scaffold production-ready TypeScript projects configured for Google Cloud (Artifact Registry, Cloud Build, Terraform).
+**In development** CLI to scaffold production-ready TypeScript projects configured for Google Cloud (Artifact Registry, Cloud Build, Terraform).
 
 ## Quick Start
 
@@ -54,6 +54,12 @@ Follow the interactive prompts:
    - `.npmrc`: Set `<SCOPE>`, `<REGION>`, `<PROJECT_ID>`, `<REPOSITORY_ID>`.
    - `cloudbuild.yaml`: Verify your GCP Artifact Registry path and scope.
    - `package.json`: Adjust author and git repository fields.
+
+## Security
+
+- Never commit `terraform.tfvars`, `.npmrc`, service-account keys, or access tokens. The generated `.gitignore` excludes local Terraform values and `.npmrc`.
+- Store the npm publishing token only in Secret Manager. It is loaded only by the tag-release build.
+- Before publishing, inspect the package contents with `npm pack --dry-run`.
 
 ---
 

@@ -1,3 +1,6 @@
 /node_modules
 /dist
 README_development.md
+terraform*
+.terraform*
+!terraform.tfvars.example

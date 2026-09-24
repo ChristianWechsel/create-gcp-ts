@@ -1,27 +1,27 @@
 steps:
-  # 1. Saubere Installation (Nutzt das funktionierende 'npm ci' + modernes Node 22)
+  # 1. Clean installation
   - name: "node:24"
     entrypoint: "npm"
     args: ["ci"]
 
-  # 2. Tests ausführen
+  # 2. Run tests
   - name: "node:24"
     entrypoint: "npm"
     args: ["test"]
 
-  # 3. Paket veröffentlichen
+  # 3. Publish the package
   - name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
     args:
       - "-c"
       - |
         set -e
-        # 1. Token mittels gcloud generieren (der SA hat ja jetzt die Berechtigungen)
+        # 1. Generate an access token with gcloud.
         TOKEN=$(gcloud auth print-access-token)
-        # 2. Basic Auth String (Base64) generieren, wie es GAR erfordert
+        # 2. Generate the base64-encoded basic-auth value required by Artifact Registry.
         AUTH_B64=$(echo -n "oauth2accesstoken:$${TOKEN}" | base64 | tr -d '\n')
 
-        # 3. Eine dedizierte, saubere config anlegen. WICHTIG: Die URL *muss* mit einem Trailing-Slash enden!
+        # 3. Create a dedicated npm configuration. The registry URL must end with a slash.
         echo "@<SCOPE>:registry=https://<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/" > /workspace/.npmrc-publish
         echo "//<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/:_auth=$${AUTH_B64}" >> /workspace/.npmrc-publish
         echo "//<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/:always-auth=true" >> /workspace/.npmrc-publish

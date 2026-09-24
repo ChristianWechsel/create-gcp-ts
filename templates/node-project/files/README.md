@@ -46,7 +46,7 @@ Create `.npmrc` in the root folder:
   - Select your GitHub account / organization
 - GitHub Login => Settings => Applications => Installed GitHub Apps => Google Cloud Build => Configure => Repository access => Select repo
 - Back in Google Cloud => Select current project
-- Connect repository 
+  - Connect repository
   - Region: europe-west3 (Frankfurt)
 - 2nd gen => Link repository
   - Connection: <GITHUB_CONNECTION_NAME>
@@ -77,6 +77,8 @@ gcp_repository_name    = "your-cloudbuild-repo-resource-name"
 target_branch          = "main"
 npm_repository_id      = "shared-npm-repo"
 ```
+
+`terraform.tfvars` contains local infrastructure metadata and must not be committed. The included `.gitignore` excludes it, `.npmrc`, Terraform state, plans, and overrides.
 
 ```shell
 # In the directory containing main.tf

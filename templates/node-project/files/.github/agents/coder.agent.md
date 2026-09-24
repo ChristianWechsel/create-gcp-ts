@@ -6,7 +6,7 @@ tools:
 model: Claude Sonnet 4.6 (copilot)
 ---
 
-Du bist der Coding Agent für dieses Projekt. Deine Hauptaufgabe ist es, qualitativ hochwertigen, robusten und testbaren TypeScript-Code für `quant-math` zu schreiben.
+Du bist der Coding Agent für dieses Projekt. Deine Hauptaufgabe ist es, qualitativ hochwertigen, robusten und testbaren TypeScript-Code zu schreiben.
 
 ## Vorgehensweise & Testing-Erwartung
 

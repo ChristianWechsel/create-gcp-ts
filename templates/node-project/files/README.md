@@ -1,87 +1,115 @@
-# create-gcp-ts
+# Node.js TypeScript Application for Google Cloud
 
-## Node Project
+A production-ready TypeScript Node.js backend application configured with strict TypeScript compilation, Jest test suites, and automated CI/CD using Google Cloud Build and Terraform.
 
-Use this template if you want to run your project directly in Node.js.
+---
 
-> **Important – Replace Placeholders:**  
-> Before first use, adjust the placeholders in the following template files:
+## Features
 
-- **`cloudbuild.yaml`**: `<SCOPE>`, `<REGION>`, `<PROJECT_ID>`, `<REPOSITORY_ID>`
-- **`LICENSE`**: `<YEAR>`, `<AUTHOR_OR_ORGANIZATION>`
-- **`package.json`**: Name, author, repository URLs, etc.
-- **`terraform.tfvars`** (or `terraform.tfvars.example`): GCP and GitHub values
+- **TypeScript with ESM**: Modern ES modules setup with strict compiler checks (`tsconfig.json`, `tsconfig.prod.json`, `tsconfig.test.json`).
+- **Jest Test Framework**: Separated unit testing (`*.test.unit.ts`) and integration testing (`*.test.int.ts`).
+- **Automated CI/CD**: Pre-configured `cloudbuild.yaml` pipeline with automated security audits (`npm audit`), test runs, and Artifact Registry / npm deployment.
+- **Infrastructure as Code (Terraform)**: Pre-configured Cloud Build push and tag triggers linked to GitHub 2nd gen repository connections.
 
-## Cloud Project Setup (One-Time)
+---
+
+## Project Structure
+
+```text
+├── bin/
+│   └── clean.sh                 # Cleans dist/ build outputs
+├── src/
+│   ├── index.ts                 # Application entry point
+│   ├── math/                    # Example application logic
+│   │   ├── add.ts
+│   │   ├── add.testdata.ts
+│   │   └── add.test.unit.ts     # Unit test suite
+│   └── integration/             # Integration tests
+│       └── add.test.int.ts      # Integration test suite
+├── cloudbuild.yaml              # Cloud Build pipeline definition
+├── jest.config.mjs              # Jest project configuration
+├── main.tf                      # Terraform Cloud Build triggers
+├── package.json                 # Project dependencies, scripts, and configuration
+├── provider.tf                  # Terraform Google provider config
+├── terraform.tfvars.example     # Template for Terraform variables
+├── tsconfig.json                # Base TypeScript compiler options
+├── tsconfig.prod.json           # Production build options
+├── tsconfig.test.json           # Test build options
+└── variables.tf                 # Terraform variable definitions
+```
+
+---
+
+## Getting Started
+
+### 1. Install Dependencies
 
 ```shell
-# Create a new project
-gcloud projects create <PROJECT_ID> --name="<PROJECT_NAME>"
-
-# List projects
-gcloud projects list
-
-# Check billing
-gcloud billing projects describe <PROJECT_ID>
-gcloud billing accounts list
-
-# Link billing account
-gcloud billing projects link <PROJECT_ID> --billing-account=<BILLING_ACCOUNT_ID>
+npm install
 ```
 
-Create `.npmrc` in the root folder:
+### 2. Configure Package Information
 
-```npmrc
-@<SCOPE>:registry=https://<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/
-```
+Adjust the metadata in `package.json`:
 
-## GitHub Connection (One-Time)
+- `"name"`: Application name (e.g., `@your-scope/my-service` or `my-service`).
+- `"description"`: Short description of the service.
+- `"author"`: Your name and email address.
 
-- Google Cloud Console => CI/CD => Cloud Build => Repositories
-- 2nd gen => Create host connection
-  - Region: europe-west3 (Frankfurt)
-  - Name: <GITHUB_CONNECTION_NAME>
-  - Connect
-- Use existing GitHub installation
-  - Select your GitHub account / organization
-- GitHub Login => Settings => Applications => Installed GitHub Apps => Google Cloud Build => Configure => Repository access => Select repo
-- Back in Google Cloud => Select current project
-  - Connect repository
-  - Region: europe-west3 (Frankfurt)
-- 2nd gen => Link repository
-  - Connection: <GITHUB_CONNECTION_NAME>
-  - Repository: `<Repo>`
+### 3. Setup GCP Cloud Build Triggers (Terraform)
 
-## Infrastructure Provisioning
+The included Terraform configuration manages the Cloud Build triggers that run your CI/CD pipeline on push and release events.
 
-```shell
-# Set main.tf variables
+1. **Copy the example variables file:**
 
-# Find github_connection_name with
-gcloud builds connections list --region=<REGION> --project=<PROJECT_ID>
-# NAME e.g. my-github-connection
+   ```shell
+   cp terraform.tfvars.example terraform.tfvars
+   ```
 
-# Find gcp_repository_name with
-gcloud builds repositories list --connection=<GITHUB_CONNECTION_NAME> --region=<REGION> --project=<PROJECT_ID>
-# NAME e.g. my-org-my-repo
-```
+2. **Configure your values in `terraform.tfvars`:**
 
-Fill in Terraform variables and create `terraform.tfvars`:
+3. **Deploy the triggers:**
 
-```tfvars
-project_id             = "your-gcp-project-id"
-region                 = "europe-west3"
-github_connection_name = "your-github-connection"
-github_repo_name       = "your-repo-name"
-gcp_repository_name    = "your-cloudbuild-repo-resource-name"
-target_branch          = "main"
-npm_repository_id      = "shared-npm-repo"
-```
+   ```shell
+   terraform init
+   terraform apply
+   ```
 
-`terraform.tfvars` contains local infrastructure metadata and must not be committed. The included `.gitignore` excludes it, `.npmrc`, Terraform state, plans, and overrides.
+> **Security Note:** `terraform.tfvars` contains local infrastructure secrets and configuration and is excluded by `.gitignore`. Do not commit this file to Git.
 
-```shell
-# In the directory containing main.tf
-terraform init
-terraform apply
-```
+---
+
+## Development Scripts
+
+| Command | Description |
+| :--- | :--- |
+| `npm run build` | Compiles TypeScript into `dist/`. |
+| `npm run build-prod` | Performs a clean compilation using `tsconfig.prod.json`. |
+| `npm start` | Runs the compiled application (`node dist/index.js`). |
+| `npm run debug` | Starts Node.js with the debugging inspector enabled (`--inspect-brk`). |
+| `npm test` | Runs the full Jest test suite (unit + integration). |
+| `npm run test:unit` | Runs only unit tests (`*.test.unit.ts`). |
+| `npm run test:int` | Runs only integration tests (`*.test.int.ts`). |
+| `npm run clean` | Deletes build outputs in `dist/`. |
+
+---
+
+## CI/CD Pipeline
+
+Pushes to your repository trigger automated builds via [cloudbuild.yaml](cloudbuild.yaml):
+
+- **Push to target branch (`main`)**:
+  - `npm audit --audit-level=high`
+  - `npm ci`
+  - `npm test`
+  - Publishes internal artifact to GCP Artifact Registry.
+- **Tag push (`v*.*.*`)**:
+  - Full audit and test cycle.
+  - Fetches release credentials from GCP Secret Manager.
+  - Publishes release package to npmjs.
+
+---
+
+## License
+
+[MIT](LICENSE)

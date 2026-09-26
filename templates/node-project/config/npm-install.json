@@ -1,10 +1,4 @@
 {
   "dependencies": [],
-  "devDependencies": [
-    "@types/jest",
-    "@types/node",
-    "jest",
-    "ts-jest",
-    "typescript"
-  ]
+  "devDependencies": ["@types/jest", "@types/node", "jest", "typescript"]
 }

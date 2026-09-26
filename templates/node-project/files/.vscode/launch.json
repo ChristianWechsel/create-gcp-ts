@@ -5,29 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/dist/index.js",
-      "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "type": "node",
-      "args": [
-        "execute-migration",
-        "migration_mySchema_from_1_to_2.json",
-        "oldLog.jsonl"
-      ]
-    },
-    {
       "name": "Debug Unit Tests",
       "type": "node",
       "request": "launch",
+      "preLaunchTask": "npm: build-test",
       "runtimeArgs": [
-        "--inspect-brk",
-        "${workspaceRoot}/node_modules/.bin/jest",
+        "--inspect",
+        "${workspaceFolder}/node_modules/jest/bin/jest.js",
         "--runInBand",
-        "--config",
-        "jest.config.unit.json"
+        "--selectProjects",
+        "Unit"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
@@ -39,12 +26,13 @@
       "name": "Debug Int Tests",
       "type": "node",
       "request": "launch",
+      "preLaunchTask": "npm: build-test",
       "runtimeArgs": [
-        "--inspect-brk",
-        "${workspaceRoot}/node_modules/.bin/jest",
+        "--inspect",
+        "${workspaceFolder}/node_modules/jest/bin/jest.js",
         "--runInBand",
-        "--config",
-        "jest.config.int.json"
+        "--selectProjects",
+        "Integration"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
@@ -60,6 +48,6 @@
         "<node_internals>/**"
       ],
       "type": "node"
-    },
+    }
   ]
 }

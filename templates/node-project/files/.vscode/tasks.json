@@ -9,7 +9,17 @@
 				"$tsc"
 			],
 			"label": "npm: build",
-			"detail": "Kompiliert das Projekt für Entwicklung / Tests (Nutzt tsconfig.json)"
+			"detail": "Kompiliert das Projekt für Entwicklung"
+		},
+		{
+			"type": "npm",
+			"script": "build-test",
+			"group": "build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"label": "npm: build-test",
+			"detail": "Kompiliert das Projekt für Tests"
 		},
 		{
 			"type": "npm",

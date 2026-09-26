@@ -6,6 +6,11 @@ export function typeSelection() {
     message: "Wähle den Projekttyp:",
     choices: [
       {
+        name: "gcp-infrastructure",
+        value: "gcp-infrastructure",
+        description: "Google Cloud Infrastructure",
+      },
+      {
         name: "node-project",
         value: "node-project",
         description: "Node.js-project",

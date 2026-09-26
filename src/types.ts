@@ -1,4 +1,9 @@
-export type ProjectType = "node-project" | "lib" | "server";
+export type ProjectType =
+  | "gcp-infrastructure"
+  | "node-project"
+  | "lib"
+  | "server";
+
 export type Template = {
   name: string;
   type: ProjectType;

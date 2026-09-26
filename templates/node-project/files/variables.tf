@@ -1,37 +1,49 @@
 variable "project_id" {
-  description = "GCP project ID where resources are created."
   type        = string
+  description = "GCP Projekt-ID, in der die Ressourcen verwaltet werden."
 }
 
-variable "region" {
-  description = "GCP region for resources such as Artifact Registry and Cloud Build."
+variable "location" {
   type        = string
-  default     = "europe-west3"
+  description = "GCP Region für Cloud Build Trigger."
 }
 
 variable "github_connection_name" {
-  description = "Name of the existing GitHub connection (Cloud Build 2nd Gen)."
   type        = string
+  description = "Name der GitHub-Verbindung in Cloud Build (2nd Gen)."
 }
 
 variable "github_repo_name" {
-  description = "Name of the connected GitHub repository."
   type        = string
-}
-
-variable "gcp_repository_name" {
-  description = "Cloud Build repository resource name from the Name column in the GCP console."
-  type        = string
+  description = "Name des verknüpften GitHub-Repositories."
 }
 
 variable "target_branch" {
-  description = "Branch that triggers Cloud Build when receiving a push."
   type        = string
-  default     = "main"
+  description = "Git-Branch, auf den der Cloud Build Push-Trigger reagieren soll."
+}
+
+variable "account_id" {
+  type        = string
+  description = "Account-ID des Service Accounts für Cloud Build."
+}
+
+variable "github_owner" {
+  type        = string
+  description = "GitHub Owner"
+}
+
+variable "npm_scope" {
+  type        = string
+  description = "Scope of npm project"
 }
 
 variable "npm_repository_id" {
-  description = "Artifact Registry repository ID for npm packages."
   type        = string
-  default     = "shared-npm-repo"
+  description = "Name des Artifact Registry Repositories für npm."
+}
+
+variable "npm_secret_name" {
+  type        = string
+  description = "Name des Secrets im Secret Manager für den NPM-Token."
 }

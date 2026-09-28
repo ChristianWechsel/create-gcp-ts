@@ -1,0 +1,19 @@
+{
+  "dependencies": [
+    "@christian-wechsel/typed-env-handler",
+    "@christian-wechsel/logger",
+    "@google-cloud/firestore",
+    "@google-cloud/secret-manager",
+    "@google-cloud/storage",
+    "express",
+    "helmet"
+  ],
+  "devDependencies": [
+    "@types/jest",
+    "@types/node",
+    "jest",
+    "typescript",
+    "@types/express",
+    "tsx"
+  ]
+}

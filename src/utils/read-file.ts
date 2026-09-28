@@ -13,3 +13,7 @@ export function readFileIfExists<T>(
   }
   return null;
 }
+
+export function readFile(filePath: string) {
+  return readFileSync(filePath, "utf-8");
+}

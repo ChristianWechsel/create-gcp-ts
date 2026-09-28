@@ -40,10 +40,12 @@ export function isNpmInstall(value: unknown): value is NPMInstall {
     candidate.devDependencies.every((dep) => typeof dep === "string")
   );
 }
+
 export type NpmConfigurationEntry = {
   key: string;
   value: string;
 };
+
 export type ServerConfig = {
   googleCloud: {
     location: string;
@@ -51,3 +53,29 @@ export type ServerConfig = {
     repository: { scope: string; name: string };
   };
 };
+
+// Relative to target directory
+export type FilesWithStringReplacements = {
+  filesWithStringReplacements: string[];
+};
+
+export function isFilesWithStringReplacements(
+  value: unknown,
+): value is FilesWithStringReplacements {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  return (
+    Array.isArray(candidate.filesWithStringReplacements) &&
+    candidate.filesWithStringReplacements.every(
+      (dep) => typeof dep === "string",
+    )
+  );
+}
+
+type Placeholders = "Scope" | "Location" | "Project" | "Repository";
+
+export type Replacements = Partial<Record<Placeholders, string>>;

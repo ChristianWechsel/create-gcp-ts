@@ -1,18 +1,32 @@
 import { resolve } from "path";
-import { NPM_INSTALL_FILE, NPM_PACKAGE_PARAMS_FILE } from "../consts.js";
 import {
+  FILES_WITH_STRING_REPLACEMENTS_FILE,
+  NPM_INSTALL_FILE,
+  NPM_PACKAGE_PARAMS_FILE,
+} from "../consts.js";
+import {
+  isFilesWithStringReplacements,
   isNpmInstall,
   isNpmPackageParams,
   NpmConfigurationEntry,
+  ServerConfig,
   Template,
 } from "../types.js";
 import { readFileIfExists } from "../utils/read-file.js";
 import { copyFolder } from "./copy.js";
 import { initNpm, installDependencies } from "./npm.js";
+import {
+  buildFilePathsForReplacements,
+  handleStringReplacements,
+  mapReplacements,
+} from "./string-replacements.js";
 
-export function scaffold(template: Template) {
-  const { contentNpmInstallFile, contentNpmPackageParamsFile } =
-    loadNpmConfiguration(template);
+export function scaffold(template: Template, serverConfig?: ServerConfig) {
+  const {
+    contentNpmInstallFile,
+    contentNpmPackageParamsFile,
+    contentFilesWithStringReplacementsFile,
+  } = loadConfiguration(template);
 
   const settings: NpmConfigurationEntry[] = [
     { key: "name", value: template.name },
@@ -30,9 +44,23 @@ export function scaffold(template: Template) {
     contentNpmInstallFile ?? { dependencies: [], devDependencies: [] },
   );
   copyFolder(template.folders.files, template.folders.target);
+
+  if (
+    serverConfig &&
+    contentFilesWithStringReplacementsFile &&
+    contentFilesWithStringReplacementsFile.filesWithStringReplacements.length >
+      0
+  ) {
+    const targetPathsForReplacements = buildFilePathsForReplacements(
+      template,
+      contentFilesWithStringReplacementsFile.filesWithStringReplacements,
+    );
+    const replacements = mapReplacements(serverConfig);
+    handleStringReplacements(targetPathsForReplacements, replacements);
+  }
 }
 
-function loadNpmConfiguration(template: Template) {
+function loadConfiguration(template: Template) {
   const contentNpmInstallFile = readFileIfExists(
     resolve(template.folders.config, NPM_INSTALL_FILE),
     isNpmInstall,
@@ -41,5 +69,13 @@ function loadNpmConfiguration(template: Template) {
     resolve(template.folders.config, NPM_PACKAGE_PARAMS_FILE),
     isNpmPackageParams,
   );
-  return { contentNpmInstallFile, contentNpmPackageParamsFile };
+  const contentFilesWithStringReplacementsFile = readFileIfExists(
+    resolve(template.folders.config, FILES_WITH_STRING_REPLACEMENTS_FILE),
+    isFilesWithStringReplacements,
+  );
+  return {
+    contentNpmInstallFile,
+    contentNpmPackageParamsFile,
+    contentFilesWithStringReplacementsFile,
+  };
 }

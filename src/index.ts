@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { scaffold } from "./template/scaffold.js";
 import { templateSelection } from "./template/template-selection.js";
 import { ServerConfig } from "./types.js";
 import { nameSelection } from "./user-selections/name.js";
@@ -23,7 +24,7 @@ try {
     targetFolder: process.cwd(),
   });
   printTemplate(template);
-  // scaffold(template);
+  scaffold(template, serverConfig);
   process.exit(0);
 } catch (error) {
   console.error(error);

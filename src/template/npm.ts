@@ -1,5 +1,4 @@
-import { NPMInstall } from "../types.js";
-import { NpmConfigurationEntry } from "../user-selections/type.js";
+import { NpmConfigurationEntry, NPMInstall } from "../types.js";
 import { executeShell } from "./execute-shell.js";
 
 export function initNpm(target: string, settings: NpmConfigurationEntry[]) {

@@ -1,7 +1,11 @@
 import { resolve } from "path";
 import { NPM_INSTALL_FILE, NPM_PACKAGE_PARAMS_FILE } from "../consts.js";
-import { isNpmInstall, isNpmPackageParams, Template } from "../types.js";
-import { NpmConfigurationEntry } from "../user-selections/type.js";
+import {
+  isNpmInstall,
+  isNpmPackageParams,
+  NpmConfigurationEntry,
+  Template,
+} from "../types.js";
 import { readFileIfExists } from "../utils/read-file.js";
 import { copyFolder } from "./copy.js";
 import { initNpm, installDependencies } from "./npm.js";

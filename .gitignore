@@ -5,3 +5,4 @@ terraform*
 .terraform*
 !terraform.tfvars.example
 ToDo.md
+templates/server

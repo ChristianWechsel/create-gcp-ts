@@ -40,3 +40,14 @@ export function isNpmInstall(value: unknown): value is NPMInstall {
     candidate.devDependencies.every((dep) => typeof dep === "string")
   );
 }
+export type NpmConfigurationEntry = {
+  key: string;
+  value: string;
+};
+export type ServerConfig = {
+  googleCloud: {
+    location: string;
+    projectId: string;
+    repository: { scope: string; name: string };
+  };
+};

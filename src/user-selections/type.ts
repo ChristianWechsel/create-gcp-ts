@@ -28,7 +28,3 @@ export function typeSelection() {
     ],
   });
 }
-export type NpmConfigurationEntry = {
-  key: string;
-  value: string;
-};

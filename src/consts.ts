@@ -33,3 +33,4 @@ export const NPM_INSTALL_FILE = "npm-install.json";
 export const NPM_PACKAGE_PARAMS_FILE = "npm-package-params.json";
 export const FILES_WITH_STRING_REPLACEMENTS_FILE =
   "files-with-string-replacements.json";
+export const TEMPLATE_EXTENSION = ".template";

@@ -1,0 +1,1 @@
+${Scope}:registry=https://${Location}.pkg.dev/${Project}/${Repository}/

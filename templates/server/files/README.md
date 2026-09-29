@@ -1,17 +1,32 @@
-# TypeScript Library for Google Cloud & NPM
+# Express TypeScript Backend for Google Cloud
 
-A production-ready TypeScript library package pre-configured with strict TypeScript compilation, Jest testing (unit and integration), and automated CI/CD via Google Cloud Build and Terraform.
+A production-ready TypeScript Express backend application pre-configured with strict TypeScript compilation, Jest test suites, containerization (Docker & Docker Compose), automated CI/CD via Google Cloud Build, and full infrastructure provisioning using Terraform on Google Cloud Platform (GCP).
 
 ---
 
 ## Features
 
-- **Strict TypeScript**: Configured with modern ESM settings (`tsconfig.json`, `tsconfig.prod.json`, `tsconfig.test.json`).
-- **Jest Test Suites**: Split into fast unit tests (`*.test.unit.ts`) and integration tests (`*.test.int.ts`).
-- **Dual CI/CD Pipeline (`cloudbuild.yaml`)**:
-  - **Internal Releases**: Pushes to the target branch (e.g., `main`) automatically publish to your private **GCP Artifact Registry** NPM repository.
-  - **Public Releases**: Pushing a version tag (e.g., `v1.0.0`) automatically publishes to **npmjs.org** using a token from **GCP Secret Manager**.
-- **Infrastructure as Code (Terraform)**: Pre-configured Terraform code (`main.tf`, `variables.tf`) to manage Cloud Build triggers connected to your GitHub repository.
+- **TypeScript with ESM**: Modern ES modules setup with strict compiler checks (`tsconfig.json`, `tsconfig.prod.json`, `tsconfig.test.json`).
+- **Express & Security Baseline**: Hardened with Helmet security headers, proxy trust configuration, JSON / URL-encoded body parsing, structured logging, and static frontend asset delivery (`public/`).
+- **GCP Services Integration with Local Adapters**:
+  - **Firestore**: Native Firestore database in production, fast in-memory adapter for local development and testing.
+  - **Cloud Storage**: Google Cloud Storage bucket with CORS in production, in-memory storage adapter for local testing.
+  - **Secret Manager**: Secure runtime secret and configuration access.
+  - **Session Management**: Session store with Firestore adapter for production and in-memory adapter for development.
+- **Containerization & Nginx Reverse Proxy**:
+  - Multi-stage `Dockerfile` (`node:24-slim`) with non-root security.
+  - `docker-compose.yml` orchestrating the Express server and an Nginx reverse proxy.
+  - Nginx pre-configured with rate limiting, SSL/TLS termination, and automated Let's Encrypt / Certbot certificate provisioning.
+- **Infrastructure as Code (Terraform)**:
+  - Compute Engine VM (`e2-micro`) with Ubuntu 24.04 LTS and automated bootstrapping via `cloud-init.yaml`.
+  - Custom VPC and dedicated subnet with firewall rules (HTTP 80, HTTPS 443, IAP SSH 22).
+  - Artifact Registry Docker repository for container images.
+  - Cloud Storage bucket with CORS headers.
+  - Firestore database in native mode.
+  - Dedicated IAM service accounts and least-privilege role bindings.
+  - Automated GCP API enablement (`compute`, `cloudbuild`, `secretmanager`, `firestore`, `artifactregistry`).
+- **Automated CI/CD (Cloud Build)**: Pre-configured `cloudbuild.yaml` with dependency audits (`npm audit`), test runs, multi-stage Docker build, and automated push to GCP Artifact Registry.
+- **Jest Test Framework**: Separated unit testing (`*.test.unit.ts`) and integration testing (`*.test.int.ts`).
 
 ---
 
@@ -20,24 +35,40 @@ A production-ready TypeScript library package pre-configured with strict TypeScr
 ```text
 ├── bin/
 │   └── clean.sh                 # Cleans dist/ build outputs
+├── public/                      # Static frontend assets
+│   ├── css/
+│   ├── js/
+│   └── index.html
 ├── src/
-│   ├── index.ts                 # Library entry point (public exports)
-│   ├── math/                    # Example domain module
-│   │   ├── add.ts               # Sample function
-│   │   ├── add.testdata.ts      # Test data fixtures
-│   │   └── add.test.unit.ts     # Unit test suite
-│   └── integration/             # Integration test directory
-│       └── add.test.int.ts      # Integration test suite
-├── cloudbuild.yaml              # Cloud Build pipeline configuration
-├── jest.config.mjs              # Jest configuration with project suites
-├── main.tf                      # Terraform Cloud Build triggers
-├── package.json                 # Package manifest, scripts, and dependencies
+│   ├── container.ts             # Dependency injection container & service wiring
+│   ├── index.ts                 # Application entry point & lifecycle
+│   ├── server.ts                # Express application factory & middleware
+│   ├── core/                    # Environment variables, error handling, secrets
+│   ├── database/                # Firestore & in-memory database adapters
+│   ├── middleware/              # Request logging and custom middleware
+│   ├── routes/                  # Express route handlers
+│   ├── storage/                 # Cloud Storage & in-memory storage adapters
+│   └── integration/             # Integration tests
+├── apis.tf                      # GCP service API enablement
+├── cloud-init.yaml              # Cloud-init configuration for VM bootstrapping
+├── cloudbuild.yaml              # Cloud Build CI/CD pipeline
+├── compute.tf                   # Compute Engine VM and static IP
+├── docker-compose.yml           # Docker Compose definition (Server + Nginx)
+├── Dockerfile                   # Multi-stage production container build
+├── firesore.tf                  # Firestore native database provisioning
+├── iam.tf                       # Service accounts and IAM role bindings
+├── jest.config.mjs              # Jest project configuration
+├── nginx.conf                   # Nginx reverse proxy, rate limiting & SSL
+├── outputs.tf                   # Terraform output values (e.g. VM public IP)
 ├── provider.tf                  # Terraform Google provider config
-├── terraform.tfvars.example     # Example variable values for Terraform
-├── tsconfig.json                # Base TypeScript configuration
-├── tsconfig.prod.json           # Production build configuration
-├── tsconfig.test.json           # Test build configuration
-└── variables.tf                 # Terraform variable definitions
+├── registry.tf                  # Artifact Registry Docker repository
+├── storage.tf                   # Cloud Storage bucket resource with CORS
+├── terraform.tfvars             # Terraform variables (pre-populated by generator)
+├── tsconfig.json                # Base TypeScript compiler options
+├── tsconfig.prod.json           # Production build options
+├── tsconfig.test.json           # Test build options
+├── variables.tf                 # Terraform variable definitions
+└── vpc.tf                       # Custom VPC, subnet, and firewall rules
 ```
 
 ---
@@ -50,110 +81,67 @@ A production-ready TypeScript library package pre-configured with strict TypeScr
 npm install
 ```
 
-### 2. Configure Package Metadata
+### 2. Local Development
 
-Open `package.json` and adjust:
+Start the development server with live reload:
 
-- `"name"`: Set your desired package name (e.g., `@your-scope/my-library`).
-- `"description"`: Brief summary of the library.
-- `"author"`: Your name and email.
-- `"repository"`: Git repository URL.
+```shell
+npm run dev
+```
 
-### 3. Setup GCP Cloud Build Triggers (Terraform)
+In development mode (`NODE_ENV=development`), the application automatically uses in-memory mock adapters for Firestore, Cloud Storage, and sessions, enabling local development without active GCP credentials.
 
-This repository includes Terraform configuration to create the Cloud Build triggers that run your CI/CD pipeline.
+### 3. Review Configuration
 
-1. **Copy the example variables file:**
+Configuration values collected during scaffolding are saved to `.env` and `terraform.tfvars`:
 
-   ```shell
-   cp terraform.tfvars.example terraform.tfvars
-   ```
+- **`.env`**: Runtime environment variables (port, Google project ID, client ID, bucket name).
+- **`terraform.tfvars`**: GCP deployment settings (project ID, region, zone, naming prefix, domain, user, email).
 
-2. **Fill in your environment details in `terraform.tfvars`:**
+> **Security Note:** `.env` and `terraform.tfvars` contain sensitive configuration and are excluded by `.gitignore`. Do not commit these files to Git.
 
-3. **Deploy the triggers:**
+### 4. Deploy Infrastructure (Terraform)
 
-   ```shell
-   terraform init
-   terraform apply
-   ```
+Provision the complete GCP infrastructure:
 
-> **Note:** `terraform.tfvars` contains sensitive environment identifiers and is ignored by `.gitignore`. Do not commit this file.
+```shell
+terraform init
+terraform apply
+```
+
+After Terraform completes:
+
+1. Note the public static IP from the output (`vm_public_ip`).
+2. Point your domain's DNS A-record to this static IP.
+3. The VM boots via `cloud-init`, installs Docker, acquires a Let's Encrypt SSL certificate for your domain via Certbot, and starts the container stack.
 
 ---
 
-## Local Development Scripts
+## Development Scripts
 
 | Command | Description |
 | :--- | :--- |
+| `npm run dev` | Starts the server in development mode with hot-reloading (`tsx watch`). |
 | `npm run build` | Compiles TypeScript using `tsconfig.json` into `dist/`. |
-| `npm run build-prod` | Produces a clean production build (`tsconfig.prod.json`). |
-| `npm test` | Builds test configuration and runs all unit and integration tests. |
+| `npm run build-prod` | Performs a clean production build (`tsconfig.prod.json`). |
+| `npm start` | Starts the compiled production application (`node dist/index.js`). |
+| `npm run debug` | Starts Node.js with the debugging inspector enabled (`--inspect-brk`). |
+| `npm test` | Runs the full Jest test suite (unit + integration). |
 | `npm run test:unit` | Runs only unit tests (`*.test.unit.ts`). |
 | `npm run test:int` | Runs only integration tests (`*.test.int.ts`). |
-| `npm run clean` | Removes the `dist/` build directory. |
+| `npm run clean` | Deletes build outputs in `dist/`. |
 
 ---
 
-## CI/CD & Publishing Workflow
+## CI/CD & Deployment Workflow
 
-The included [cloudbuild.yaml](cloudbuild.yaml) pipeline automates testing and deployment:
+The included [cloudbuild.yaml](cloudbuild.yaml) pipeline automates testing and container deployment:
 
-### 1. Internal Branch Releases (GCP Artifact Registry)
-
-Every push to your target branch (`main`):
-
-1. Runs `npm audit --audit-level=high` for vulnerability scanning.
-2. Runs `npm ci` and `npm test` across all suites.
-3. Automatically authenticates using Cloud Build service account credentials.
-4. Publishes an internal package version to your private GCP Artifact Registry.
-
-### 2. Public Releases (npmjs.org)
-
-When you are ready to publish a release to public npm:
-
-1. Update the version in `package.json`:
-
-   ```shell
-   npm version patch # or minor, major
-   ```
-
-2. Push the commit and the version tag:
-
-   ```shell
-   git push origin main --tags
-   ```
-
-3. Cloud Build detects the `v*` tag, retrieves the `NPM_TOKEN` secret from Secret Manager, and publishes the package with public access:
-
-   ```shell
-   npm publish --access public
-   ```
-
----
-
-## Consuming this Library
-
-### From GCP Artifact Registry (Internal)
-
-In downstream projects, configure `.npmrc`:
-
-```npmrc
-@your-scope:registry=https://<REGION>-npm.pkg.dev/<PROJECT_ID>/<REPOSITORY_ID>/
-```
-
-Authenticate your local environment:
-
-```shell
-npx google-artifactregistry-auth
-npm install @your-scope/my-library
-```
-
-### From npmjs.org (Public)
-
-```shell
-npm install @your-scope/my-library
-```
+1. **Vulnerability Audit**: Runs `npm audit --audit-level=high`.
+2. **Authentication & Dependencies**: Authenticates with Artifact Registry via `google-artifactregistry-auth` and runs `npm ci`.
+3. **Automated Testing**: Runs `npm test` across all test suites.
+4. **Container Build & Tag**: Builds the production Docker image and tags it with both the version from `package.json` and `latest`.
+5. **Registry Deployment**: Pushes the Docker image to your private GCP Artifact Registry Docker repository.
 
 ---
 

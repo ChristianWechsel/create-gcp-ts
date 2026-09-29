@@ -1,1 +1,1 @@
-{ "filesWithStringReplacements": [".env", ".npmrc"] }
+{ "filesWithStringReplacements": [".env", ".npmrc", "docker-compose.yml"] }

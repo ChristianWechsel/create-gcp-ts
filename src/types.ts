@@ -47,10 +47,13 @@ export type NpmConfigurationEntry = {
 };
 
 export type ServerConfig = {
+  app: { name: string };
   googleCloud: {
     location: string;
     projectId: string;
     repository: { scope: string; name: string };
+    clientId: string;
+    bucketName: string;
   };
 };
 
@@ -76,6 +79,13 @@ export function isFilesWithStringReplacements(
   );
 }
 
-type Placeholders = "Scope" | "Location" | "Project" | "Repository";
+type Placeholders =
+  | "Scope"
+  | "Location"
+  | "Project"
+  | "Repository"
+  | "AppName"
+  | "ClientId"
+  | "BucketName";
 
 export type Replacements = Partial<Record<Placeholders, string>>;

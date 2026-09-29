@@ -1,13 +1,13 @@
-name: <Name>
+name: ${AppName}
 services:
   server:
-    image: <Image>
+    image: ${Location}-docker.pkg.dev/${ProjectId}/${Repository}/${AppName}
     env_file:
       - .env
     environment:
       - NODE_ENV=production
   reverse-proxy:
-    image: nginx:latest
+    image: nginx:1.31.6
     ports:
       - "80:80"
       - "443:443"

@@ -18,6 +18,9 @@ export function buildFilePathsForReplacements(
 export function mapReplacements(serverConfig: ServerConfig): Replacements {
   const replacements: Replacements = {};
 
+  if (serverConfig.app.name) {
+    replacements.AppName = serverConfig.app.name;
+  }
   if (serverConfig.googleCloud.location) {
     replacements.Location = serverConfig.googleCloud.location;
   }

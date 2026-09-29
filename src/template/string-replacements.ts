@@ -21,6 +21,15 @@ export function mapReplacements(serverConfig: ServerConfig): Replacements {
   if (serverConfig.app.name) {
     replacements.AppName = serverConfig.app.name;
   }
+  if (serverConfig.app.domain) {
+    replacements.Domain = serverConfig.app.domain;
+  }
+  if (serverConfig.user.name) {
+    replacements.User = serverConfig.user.name;
+  }
+  if (serverConfig.user.email) {
+    replacements.Email = serverConfig.user.email;
+  }
   if (serverConfig.googleCloud.location) {
     replacements.Location = serverConfig.googleCloud.location;
   }

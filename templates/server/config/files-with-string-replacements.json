@@ -1,1 +1,3 @@
-{ "filesWithStringReplacements": [".env", ".npmrc", "docker-compose.yml"] }
+{
+  "filesWithStringReplacements": [".env", ".npmrc", "terraform.tfvars"]
+}

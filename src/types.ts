@@ -47,7 +47,8 @@ export type NpmConfigurationEntry = {
 };
 
 export type ServerConfig = {
-  app: { name: string };
+  app: { name: string; domain: string };
+  user: { name: string; email: string };
   googleCloud: {
     location: string;
     projectId: string;
@@ -86,6 +87,9 @@ type Placeholders =
   | "Repository"
   | "AppName"
   | "ClientId"
-  | "BucketName";
+  | "BucketName"
+  | "Domain"
+  | "User"
+  | "Email";
 
 export type Replacements = Partial<Record<Placeholders, string>>;

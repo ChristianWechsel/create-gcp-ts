@@ -51,9 +51,22 @@ export async function serverConfigInput(
     message: "Google Cloud bucket name:",
     validate: (value) => validateStringLength(value, "Bucket name", 1, 100),
   });
+  const domain = await input({
+    message: "Application domain: example.create-gcp-ts.com",
+    validate: (value) => validateStringLength(value, "Domain", 1, 100),
+  });
+  const userName = await input({
+    message: "User name:",
+    validate: (value) => validateStringLength(value, "User name", 1, 100),
+  });
+  const userEmail = await input({
+    message: "User email:",
+    validate: (value) => validateStringLength(value, "User email", 5, 100),
+  });
 
   return {
-    app: { name: appName.trim() },
+    app: { name: appName.trim(), domain: domain.trim() },
+    user: { name: userName.trim(), email: userEmail.trim() },
     googleCloud: {
       location: location.trim(),
       projectId: projectId.trim(),

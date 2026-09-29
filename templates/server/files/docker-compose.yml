@@ -1,7 +1,7 @@
 name: ${AppName}
 services:
   server:
-    image: ${Location}-docker.pkg.dev/${ProjectId}/${Repository}/${AppName}
+    image: ${location}-docker.pkg.dev/${project_id}/${repository}/${app_name}
     env_file:
       - .env
     environment:

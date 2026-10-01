@@ -42,6 +42,12 @@ export function mapReplacements(serverConfig: ServerConfig): Replacements {
   if (serverConfig.googleCloud.repository.scope) {
     replacements.Scope = serverConfig.googleCloud.repository.scope;
   }
+  if (serverConfig.googleCloud.clientId) {
+    replacements.ClientId = serverConfig.googleCloud.clientId;
+  }
+  if (serverConfig.googleCloud.bucketName) {
+    replacements.BucketName = serverConfig.googleCloud.bucketName;
+  }
 
   return replacements;
 }

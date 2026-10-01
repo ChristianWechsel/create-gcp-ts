@@ -14,7 +14,7 @@ try {
 
   let serverConfig: ServerConfig | undefined;
   if (type === "server") {
-    serverConfig = await serverConfigInput();
+    serverConfig = await serverConfigInput(name);
     console.log("Server configuration:", serverConfig);
   }
 

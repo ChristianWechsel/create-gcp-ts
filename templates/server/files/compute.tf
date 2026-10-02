@@ -30,7 +30,6 @@ resource "google_compute_instance" "exit_games_vm" {
       app_name    = var.name_prefix
       domain      = var.domain
       user        = var.user
-      email       = var.email
       location    = var.location
 
       docker_compose_content = templatefile("${path.module}/docker-compose.yml", {
@@ -45,6 +44,13 @@ resource "google_compute_instance" "exit_games_vm" {
       })
       
       env_file_content = file("${path.module}/.env")
+
+      init_sh_content = templatefile("${path.module}/init.sh", {
+        domain      = var.domain
+        email       = var.email
+        user        = var.user
+        app_name    = var.name_prefix
+      })
     })
   }
 

@@ -18,13 +18,11 @@ A production-ready TypeScript Express backend application pre-configured with st
   - `docker-compose.yml` orchestrating the Express server and an Nginx reverse proxy.
   - Nginx pre-configured with rate limiting, SSL/TLS termination, and automated Let's Encrypt / Certbot certificate provisioning.
 - **Infrastructure as Code (Terraform)**:
+  - Assumes an existing GCP project provisioned with the `server-infrastructure` template (which enables APIs and shared services).
   - Compute Engine VM (`e2-micro`) with Ubuntu 24.04 LTS and automated bootstrapping via `cloud-init.yaml`.
   - Custom VPC and dedicated subnet with firewall rules (HTTP 80, HTTPS 443, IAP SSH 22).
-  - Artifact Registry Docker repository for container images.
-  - Cloud Storage bucket with CORS headers.
-  - Firestore database in native mode.
   - Dedicated IAM service accounts and least-privilege role bindings.
-  - Automated GCP API enablement (`compute`, `cloudbuild`, `secretmanager`, `firestore`, `artifactregistry`).
+  - Hardened SSH access exclusively via Google Identity-Aware Proxy (IAP) without public port 22 exposure.
 - **Automated CI/CD (Cloud Build)**: Pre-configured `cloudbuild.yaml` with dependency audits (`npm audit`), test runs, multi-stage Docker build, and automated push to GCP Artifact Registry.
 - **Jest Test Framework**: Separated unit testing (`*.test.unit.ts`) and integration testing (`*.test.int.ts`).
 
@@ -49,20 +47,17 @@ A production-ready TypeScript Express backend application pre-configured with st
 │   ├── routes/                  # Express route handlers
 │   ├── storage/                 # Cloud Storage & in-memory storage adapters
 │   └── integration/             # Integration tests
-├── apis.tf                      # GCP service API enablement
 ├── cloud-init.yaml              # Cloud-init configuration for VM bootstrapping
 ├── cloudbuild.yaml              # Cloud Build CI/CD pipeline
 ├── compute.tf                   # Compute Engine VM and static IP
 ├── docker-compose.yml           # Docker Compose definition (Server + Nginx)
 ├── Dockerfile                   # Multi-stage production container build
-├── firesore.tf                  # Firestore native database provisioning
 ├── iam.tf                       # Service accounts and IAM role bindings
+├── init.sh                      # Remote script to acquire SSL & start containers
 ├── jest.config.mjs              # Jest project configuration
 ├── nginx.conf                   # Nginx reverse proxy, rate limiting & SSL
-├── outputs.tf                   # Terraform output values (e.g. VM public IP)
+├── outputs.tf                   # Terraform output values (IP, IAP SSH & SSL command)
 ├── provider.tf                  # Terraform Google provider config
-├── registry.tf                  # Artifact Registry Docker repository
-├── storage.tf                   # Cloud Storage bucket resource with CORS
 ├── terraform.tfvars             # Terraform variables (pre-populated by generator)
 ├── tsconfig.json                # Base TypeScript compiler options
 ├── tsconfig.prod.json           # Production build options
@@ -102,18 +97,82 @@ Configuration values collected during scaffolding are saved to `.env` and `terra
 
 ### 4. Deploy Infrastructure (Terraform)
 
-Provision the complete GCP infrastructure:
+#### Prerequisites
+
+This template requires an existing GCP project provisioned with the **`server-infrastructure`** baseline template. Ensure that:
+
+1. `server-infrastructure` has been applied for your GCP project (APIs, Firestore, Artifact Registry, etc. are ready).
+2. Your local `gcloud` CLI is logged in and configured:
+
+   ```shell
+   gcloud auth login
+   gcloud auth application-default login
+   ```
+
+3. Your GCP user account has permission to access VMs via Identity-Aware Proxy (IAP): `roles/iap.tunnelResourceAccessor` and `roles/compute.instanceAdmin.v1` (or `roles/compute.osLogin`).
+
+#### Provisioning
+
+Run Terraform to create the VPC, static IP, VM, and IAM service accounts:
 
 ```shell
 terraform init
 terraform apply
 ```
 
-After Terraform completes:
+After Terraform successfully finishes, check the outputs:
 
-1. Note the public static IP from the output (`vm_public_ip`).
-2. Point your domain's DNS A-record to this static IP.
-3. The VM boots via `cloud-init`, installs Docker, acquires a Let's Encrypt SSL certificate for your domain via Certbot, and starts the container stack.
+- **`vm_public_ip`**: The public static IPv4 address reserved for your server.
+- **`ssh_connect_command`**: The `gcloud` command to connect to the VM via IAP SSH.
+- **`ssl_init_command`**: The remote execution command to fetch the SSL certificate and start the app.
+
+---
+
+### 5. DNS Configuration & SSL / Container Startup
+
+Because Let's Encrypt requires domain verification on Port 80 before issuing a certificate, follow these steps:
+
+#### Step 1: Configure DNS A-Record
+
+In your DNS provider (e.g. Cloudflare, Route53, Namecheap):
+
+- Create an **A-Record** pointing your domain (e.g. `api.example.com`) to the IP address from `vm_public_ip`.
+- If using Cloudflare, make sure the proxy status is set to **DNS only (grey cloud)** during initial certificate provisioning, or set SSL/TLS mode to "Full".
+
+#### Step 2: Initialize SSL and Start Application
+
+Run the command generated in Terraform output `ssl_init_command` directly from your local terminal:
+
+```shell
+gcloud compute ssh <vm-name> --zone=<zone> --project=<project-id> --tunnel-through-iap --command="sudo /opt/<app-name>/init.sh"
+```
+
+This command runs [init.sh](init.sh) on the VM via secure IAP tunnel without exposing SSH port 22 to the public internet:
+
+1. Acquires a Let's Encrypt TLS certificate via `certbot certonly --standalone`.
+2. Starts the Docker Compose stack (Express application + Nginx reverse proxy).
+
+#### Step 3: Interactive SSH Access (Optional)
+
+To connect interactively to the VM without opening port 22 to the public internet:
+
+```shell
+gcloud compute ssh <vm-name> --zone=<zone> --project=<project-id> --tunnel-through-iap
+```
+
+Once connected, you can inspect logs and Docker status:
+
+```shell
+# View cloud-init bootstrap progress
+sudo tail -f /var/log/cloud-init-output.log
+
+# Check running containers
+sudo docker ps
+
+# Follow container logs
+cd /opt/<app-name>
+sudo docker compose logs -f
+```
 
 ---
 

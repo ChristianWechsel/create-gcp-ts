@@ -2,6 +2,7 @@ export type ProjectType =
   | "gcp-infrastructure"
   | "node-project"
   | "lib"
+  | "server-infrastructure"
   | "server";
 
 export type Template = {

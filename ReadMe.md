@@ -57,8 +57,9 @@ The CLI will guide you through interactive prompts:
 2. **Project Type**: Select the template that matches your target:
    - **`lib`**: TypeScript library / NPM package with dual publishing to GCP Artifact Registry and npmjs.
    - **`node-project`**: Standalone Node.js TypeScript application with Cloud Build triggers.
-   - **`gcp-infrastructure`**: Shared GCP baseline infrastructure (Artifact Registry NPM repo, Cloud Build Service Account, and IAM bindings).
-   - **`server`**: *(In development)* Backend server template.
+   - **`gcp-infrastructure`**: Shared GCP baseline infrastructure for NPM libraries (Artifact Registry NPM repo, Cloud Build Service Account, and IAM bindings).
+   - **`server-infrastructure`**: Dedicated GCP project baseline for hosting servers (GCP project creation, enabled APIs, Artifact Registry Docker repository, Firestore native DB, Storage bucket, and Cloud Build SA).
+   - **`server`**: Production-ready Express backend with Docker, Nginx reverse proxy, Certbot TLS, Firestore, and Compute Engine VM via IAP SSH.
 
 ---
 
@@ -68,45 +69,33 @@ The CLI will guide you through interactive prompts:
 | :--- | :--- | :--- |
 | **`lib`** | Reusable TypeScript libraries / NPM packages | Dual CI/CD publishing (internal GCP Artifact Registry on branch push, public npmjs on tag release), Jest test suites, `.d.ts` declaration generation. |
 | **`node-project`** | Node.js backend applications and services | TypeScript compilation, Jest testing, Cloud Build triggers for continuous integration and automated builds. |
-| **`gcp-infrastructure`** | Central GCP infrastructure setup | Creates the shared Artifact Registry NPM repo, Cloud Build Service Account, and required IAM roles once per GCP project. |
+| **`gcp-infrastructure`** | Central GCP infrastructure setup for libraries | Creates shared Artifact Registry NPM repo, Cloud Build Service Account, and required IAM roles once per GCP project. |
+| **`server-infrastructure`** | Central GCP project baseline for server workloads | Creates a new GCP project, links billing, enables core APIs, provisions Artifact Registry Docker repository, Firestore DB, Storage bucket, and build service accounts. Outputs shared configuration for server instances. |
+| **`server`** | Express TypeScript backend server | Complete containerized Express stack with Docker Compose and Nginx reverse proxy, Compute Engine VM, custom VPC, IAP-secured SSH, automated TLS via `init.sh`, and local emulator/adapter fallbacks. |
 
 ---
 
-## Getting Started with Scaffolding
+## Scaffolding & Setup Workflows
 
-After generating a project (e.g., `lib` or `node-project`), follow these steps:
+### Libraries & Node Projects (`lib`, `node-project`)
 
-### 1. Install Dependencies
+1. First provision the shared library infrastructure once per GCP project using **`gcp-infrastructure`**.
+2. Scaffold your `lib` or `node-project`.
+3. Install dependencies (`npm install`).
+4. Configure `terraform.tfvars` from `terraform.tfvars.example` and run `terraform init && terraform apply` to deploy Cloud Build triggers.
 
-```shell
-npm install
-```
+### Server Deployments (`server-infrastructure`, `server`)
 
-### 2. Configure Terraform Variables
+1. **Create the Project Baseline (`server-infrastructure`)**:
+   - Run `terraform init && terraform apply` to create the GCP project, enable APIs, and provision the Docker repository, Firestore database, and Cloud Storage bucket.
+   - Note the outputs with `terraform output` (e.g. `project_id`, `location`, `docker_repository`, `storage_bucket_name`).
+2. **Deploy the Server Application (`server`)**:
+   - Scaffold the `server` project and review configuration in `.env` and `terraform.tfvars` using the values from `server-infrastructure`.
+   - Run `terraform init && terraform apply` to provision the VPC, static IP, and Compute Engine VM.
+   - Point your DNS A-record to the generated `vm_public_ip`.
+   - Run the generated `ssl_init_command` (`gcloud compute ssh ... --tunnel-through-iap --command="sudo /opt/<app-name>/init.sh"`) to acquire the TLS certificate and launch the container stack without exposing SSH port 22.
 
-Each generated project includes Terraform files to provision Cloud Build triggers connected to your GitHub repository.
-
-```shell
-cp terraform.tfvars.example terraform.tfvars
-```
-
-Edit `terraform.tfvars` with your project's specific details:
-
-> **Security Note:** `terraform.tfvars` contains sensitive deployment metadata and is automatically ignored by `.gitignore`. Never commit this file.
-
-### 3. Deploy Cloud Build Triggers
-
-Initialize and apply the Terraform configuration:
-
-```shell
-terraform init
-terraform apply
-```
-
-This sets up:
-
-- A Cloud Build trigger listening for pushes to your target branch (e.g. `main`).
-- A Cloud Build trigger listening for tag releases (e.g. `v*`).
+---
 
 ---
 

@@ -25,6 +25,11 @@ export function typeSelection() {
         value: "server",
         description: "Server",
       },
+      {
+        name: "server-infrastructure",
+        value: "server-infrastructure",
+        description: "Server Infrastructure",
+      },
     ],
   });
 }

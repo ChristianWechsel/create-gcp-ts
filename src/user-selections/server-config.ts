@@ -27,6 +27,10 @@ export function validateStringLength(
 export async function serverConfigInput(
   appName: string,
 ): Promise<ServerConfig> {
+  const scope = await input({
+    message: "Project scope:",
+    validate: (value) => validateStringLength(value, "Scope", 1, 214),
+  });
   const projectId = await input({
     message: "Google Cloud project ID:",
     validate: (value) => validateStringLength(value, "Project ID", 6, 30),
@@ -38,10 +42,6 @@ export async function serverConfigInput(
   const repositoryName = await input({
     message: "Google Cloud repository name:",
     validate: (value) => validateStringLength(value, "Repository name", 1, 63),
-  });
-  const scope = await input({
-    message: "Google Cloud repository scope:",
-    validate: (value) => validateStringLength(value, "Scope", 1, 214),
   });
   const bucketName = await input({
     message: "Google Cloud bucket name:",

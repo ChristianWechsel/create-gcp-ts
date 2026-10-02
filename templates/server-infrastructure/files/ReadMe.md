@@ -147,6 +147,15 @@ This project serves as the foundational GCP environment. Once provisioned, you c
 
 ---
 
+## Cleanup / Deletion
+
+```shell
+terraform destroy
+gcloud projects delete <PROJECT_ID>
+```
+
+---
+
 ## License
 
 [MIT](LICENSE)

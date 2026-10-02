@@ -1,5 +1,5 @@
 output "project_id" {
-  value       = var.project_id
+  value       = google_project.project.project_id
   description = "GCP Project ID"
 }
 
@@ -19,7 +19,7 @@ output "docker_repository" {
 }
 
 output "docker_registry_url" {
-  value       = "${var.location}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}"
+  value       = "${var.location}-docker.pkg.dev/${google_project.project.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}"
   description = "Full Docker registry URL for container images"
 }
 

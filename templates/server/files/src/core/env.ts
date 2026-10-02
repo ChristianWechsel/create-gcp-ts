@@ -3,12 +3,10 @@ import { HandleEnv } from "@christian-wechsel/typed-env-handler";
 export function createEnv() {
   return new HandleEnv<{
     NODE_ENV: "development" | "production" | "test";
-    IS_DOCKER: boolean;
     PORT: number;
+    IS_DOCKER: boolean;
     APP_NAME: string;
-    GOOGLE_CLIENT_ID: string;
     GOOGLE_PROJECT_ID: string;
-    ADMIN_EMAIL: string;
     BUCKET_NAME: string;
   }>(
     {
@@ -23,12 +21,10 @@ export function createEnv() {
           );
         },
       },
-      IS_DOCKER: HandleEnv.boolean({ defaultValue: false }),
       PORT: HandleEnv.number({ defaultValue: 80 }),
+      IS_DOCKER: HandleEnv.boolean({ defaultValue: false }),
       APP_NAME: HandleEnv.string({ defaultValue: "app" }),
-      GOOGLE_CLIENT_ID: HandleEnv.string(),
       GOOGLE_PROJECT_ID: HandleEnv.string(),
-      ADMIN_EMAIL: HandleEnv.string({ defaultValue: "" }),
       BUCKET_NAME: HandleEnv.string(),
     },
     { debugLogs: true, docker: { pathSecrets: "/run/secrets" } },

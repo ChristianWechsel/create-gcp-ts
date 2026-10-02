@@ -1,4 +1,5 @@
 import { input } from "@inquirer/prompts";
+import { sep } from "node:path";
 
 export function validateNpmPackageName(rawName: string): true | string {
   const name = rawName.trim();
@@ -19,9 +20,13 @@ export function validateNpmPackageName(rawName: string): true | string {
 }
 
 export function nameSelection() {
+  const cwd = process.cwd();
+  const splittedCwd = cwd.split(sep);
+  const defaultName = splittedCwd[splittedCwd.length - 1];
+
   return input({
     message: "Project name:",
-    default: "my-gcp-project",
+    default: defaultName,
     validate: validateNpmPackageName,
   });
 }

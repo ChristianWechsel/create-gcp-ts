@@ -27,6 +27,11 @@ try {
   scaffold(template, serverConfig);
   process.exit(0);
 } catch (error) {
-  console.error(error);
-  process.exit(1);
+  if (error instanceof Error && error.name === "ExitPromptError") {
+    console.log("Until next time!");
+    process.exit(0);
+  } else {
+    console.error(error);
+    process.exit(1);
+  }
 }

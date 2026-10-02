@@ -54,7 +54,6 @@ export type ServerConfig = {
     location: string;
     projectId: string;
     repository: { scope: string; name: string };
-    clientId: string;
     bucketName: string;
   };
 };
@@ -87,7 +86,6 @@ type Placeholders =
   | "Project"
   | "Repository"
   | "AppName"
-  | "ClientId"
   | "BucketName"
   | "Domain"
   | "User"

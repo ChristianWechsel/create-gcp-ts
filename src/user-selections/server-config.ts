@@ -27,13 +27,13 @@ export function validateStringLength(
 export async function serverConfigInput(
   appName: string,
 ): Promise<ServerConfig> {
-  const location = await input({
-    message: "Google Cloud location:",
-    validate: (value) => validateStringLength(value, "Location", 2, 50),
-  });
   const projectId = await input({
     message: "Google Cloud project ID:",
     validate: (value) => validateStringLength(value, "Project ID", 6, 30),
+  });
+  const location = await input({
+    message: "Google Cloud location:",
+    validate: (value) => validateStringLength(value, "Location", 2, 50),
   });
   const repositoryName = await input({
     message: "Google Cloud repository name:",
@@ -42,10 +42,6 @@ export async function serverConfigInput(
   const scope = await input({
     message: "Google Cloud repository scope:",
     validate: (value) => validateStringLength(value, "Scope", 1, 214),
-  });
-  const clientId = await input({
-    message: "Google Cloud client ID:",
-    validate: (value) => validateStringLength(value, "Client ID", 1, 100),
   });
   const bucketName = await input({
     message: "Google Cloud bucket name:",
@@ -57,6 +53,7 @@ export async function serverConfigInput(
   });
   const userName = await input({
     message: "User name:",
+    default: process.env.USER ?? "",
     validate: (value) => validateStringLength(value, "User name", 1, 100),
   });
   const userEmail = await input({
@@ -71,7 +68,6 @@ export async function serverConfigInput(
       location: location.trim(),
       projectId: projectId.trim(),
       repository: { scope: scope.trim(), name: repositoryName.trim() },
-      clientId: clientId.trim(),
       bucketName: bucketName.trim(),
     },
   };

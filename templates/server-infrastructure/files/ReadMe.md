@@ -117,11 +117,32 @@ gcloud iam service-accounts list --project=<PROJECT_ID>
 
 ---
 
+## Outputs & Connecting Server Templates
+
+After running `terraform apply`, Terraform outputs the key configuration values needed by server templates (such as `server` scaffolded via `create-gcp-ts`):
+
+| Terraform Output | Target File in Server Template | Variable / Environment Key | Description |
+| :--- | :--- | :--- | :--- |
+| `project_id` | `terraform.tfvars` / `.env` | `project_id` / `GOOGLE_PROJECT_ID` | GCP Project ID |
+| `location` | `terraform.tfvars` | `location` | GCP Region (e.g. `europe-west3`) |
+| `zone` | `terraform.tfvars` | `zone` | GCP Zone (e.g. `europe-west3-a`) |
+| `docker_repository` | `terraform.tfvars` | `repository` | Artifact Registry repository (`docker-repo`) |
+| `storage_bucket_name` | `.env` | `BUCKET_NAME` | Cloud Storage bucket name (`<project_id>-storage`) |
+| `cloudbuild_service_account` | Cloud Build Triggers | Service Account | Dedicated build SA (`cloudbuild-custom-sa@...`) |
+
+You can display these output values anytime with:
+
+```shell
+terraform output
+```
+
+---
+
 ## Using This Infrastructure with Server Templates
 
 This project serves as the foundational GCP environment. Once provisioned, you can deploy server workloads into this project:
 
-- Provide the created `project_id`, `location`, and Docker repository details in the configuration of your server template (e.g., `server`).
+- Reuse the outputs listed above to populate `terraform.tfvars`, `.env`, and `.npmrc` in your server instances.
 - Deploy virtual machines, VPC networking, containers, and application configs on top of this established project baseline.
 
 ---

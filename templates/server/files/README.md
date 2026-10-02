@@ -88,10 +88,20 @@ In development mode (`NODE_ENV=development`), the application automatically uses
 
 ### 3. Review Configuration
 
-Configuration values collected during scaffolding are saved to `.env` and `terraform.tfvars`:
+Configuration values are saved to `.env`, `terraform.tfvars`, and `.npmrc`. These values should be filled using the outputs produced by your baseline **`server-infrastructure`** Terraform run (`terraform output`):
 
-- **`.env`**: Runtime environment variables (port, Google project ID, client ID, bucket name).
-- **`terraform.tfvars`**: GCP deployment settings (project ID, region, zone, naming prefix, domain, user, email).
+- **`terraform.tfvars`**:
+  - `project_id`: From `server-infrastructure` output `project_id`.
+  - `location`: From `server-infrastructure` output `location` (e.g. `europe-west3`).
+  - `zone`: From `server-infrastructure` output `zone` (e.g. `europe-west3-a`).
+  - `repository`: From `server-infrastructure` output `docker_repository` (`docker-repo`).
+  - `name_prefix`, `domain`, `user`, `email`, `cors_allowed_origins`: Server-specific parameters.
+- **`.env`**:
+  - `GOOGLE_PROJECT_ID`: From `server-infrastructure` output `project_id`.
+  - `BUCKET_NAME`: From `server-infrastructure` output `storage_bucket_name`.
+  - `PORT`, `IS_DOCKER`, `APP_NAME`, `GOOGLE_CLIENT_ID`: Server-specific runtime parameters.
+- **`.npmrc`** (if using private artifact packages):
+  - Uses the `location` and `project_id` matching your GCP infrastructure.
 
 > **Security Note:** `.env` and `terraform.tfvars` contain sensitive configuration and are excluded by `.gitignore`. Do not commit these files to Git.
 

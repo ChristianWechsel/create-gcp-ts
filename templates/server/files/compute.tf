@@ -1,4 +1,4 @@
-resource "google_compute_instance" "exit_games_vm" {
+resource "google_compute_instance" "app_vm" {
   name         = "${var.name_prefix}-vm"
   machine_type = "e2-micro"
   zone         = var.zone

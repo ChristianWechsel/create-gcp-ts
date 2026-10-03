@@ -7,19 +7,19 @@ export async function serverConfigInput(params: {
   scope: string;
 }): Promise<ServerConfig> {
   const projectId = await input({
-    message: "Google Cloud project ID:",
+    message: "project_id:",
     validate: (value) => validateStringLength(value, "Project ID", 6, 30),
   });
   const location = await input({
-    message: "Google Cloud location:",
+    message: "location:",
     validate: (value) => validateStringLength(value, "Location", 2, 50),
   });
   const repositoryName = await input({
-    message: "Google Cloud repository name:",
+    message: "docker_repository:",
     validate: (value) => validateStringLength(value, "Repository name", 1, 63),
   });
   const bucketName = await input({
-    message: "Google Cloud bucket name:",
+    message: "storage_bucket_name:",
     validate: (value) => validateStringLength(value, "Bucket name", 1, 100),
   });
   const domain = await input({

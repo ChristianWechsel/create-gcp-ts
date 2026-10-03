@@ -22,3 +22,8 @@ output "storage_bucket_name" {
   value       = google_storage_bucket.file_storage.name
   description = "GCP Storage Bucket name (pass to server template .env as BUCKET_NAME)"
 }
+
+output "service account cloud build" {
+  value       = google_service_account.account_id
+  description = "GCP Service Account ID of Cloud Build"
+}

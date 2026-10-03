@@ -159,3 +159,5 @@ gcloud projects delete <PROJECT_ID>
 ## License
 
 [MIT](LICENSE)
+
+> **Note:** Update the [LICENSE](LICENSE) file manually with the current year and your name or organization (replace `<YEAR>` and `<AUTHOR_OR_ORGANIZATION>`).

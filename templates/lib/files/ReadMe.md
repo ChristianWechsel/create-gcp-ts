@@ -59,6 +59,8 @@ Open `package.json` and adjust:
 - `"author"`: Your name and email.
 - `"repository"`: Git repository URL.
 
+Also update the [LICENSE](LICENSE) file with the current year and your name or organization.
+
 ### 3. Setup GCP Cloud Build Triggers (Terraform)
 
 This repository includes Terraform configuration to create the Cloud Build triggers that run your CI/CD pipeline.
@@ -160,3 +162,5 @@ npm install @your-scope/my-library
 ## License
 
 [MIT](LICENSE)
+
+> **Note:** Update the [LICENSE](LICENSE) file manually with the current year and your name or organization (replace `<YEAR>` and `<AUTHOR_OR_ORGANIZATION>`).

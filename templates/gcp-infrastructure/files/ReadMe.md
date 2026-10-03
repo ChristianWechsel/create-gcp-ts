@@ -96,3 +96,5 @@ When scaffolding projects with `create-gcp-ts` (using `lib` or `node-project`), 
 ## License
 
 [MIT](LICENSE)
+
+> **Note:** Update the [LICENSE](LICENSE) file manually with the current year and your name or organization (replace `<YEAR>` and `<AUTHOR_OR_ORGANIZATION>`).

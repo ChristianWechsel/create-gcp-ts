@@ -56,6 +56,8 @@ Adjust the metadata in `package.json`:
 - `"description"`: Short description of the service.
 - `"author"`: Your name and email address.
 
+Also update the [LICENSE](LICENSE) file with the current year and your name or organization.
+
 ### 3. Setup GCP Cloud Build Triggers (Terraform)
 
 The included Terraform configuration manages the Cloud Build triggers that run your CI/CD pipeline on push and release events.
@@ -113,3 +115,5 @@ Pushes to your repository trigger automated builds via [cloudbuild.yaml](cloudbu
 ## License
 
 [MIT](LICENSE)
+
+> **Note:** Update the [LICENSE](LICENSE) file manually with the current year and your name or organization (replace `<YEAR>` and `<AUTHOR_OR_ORGANIZATION>`).

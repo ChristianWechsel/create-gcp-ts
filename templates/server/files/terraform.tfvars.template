@@ -1,12 +1,12 @@
-project_id 				= ${Project}
-location   				= ${Location}
-zone       				= ${Location}-a
-name_prefix 			= ${AppName}
-repository				= ${Repository}
+project_id 				= "${Project}"
+location   				= "${Location}"
+zone       				= "${Location}-a"
+name_prefix 			= "${AppName}"
+repository				= "${Repository}"
 cors_allowed_origins 	= [
 	"https://${Domain}",
 	"http://localhost:8000",
 ]
-domain					= ${Domain}
-user					= ${User}
-email					= ${Email}
+domain					= "${Domain}"
+user					= "${User}"
+email					= "${Email}"

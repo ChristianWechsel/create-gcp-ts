@@ -1,4 +1,4 @@
-name: ${AppName}
+name: ${app_name}
 services:
   server:
     image: ${location}-docker.pkg.dev/${project_id}/${repository}/${app_name}

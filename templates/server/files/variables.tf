@@ -30,15 +30,15 @@ variable "cors_allowed_origins" {
 
 variable "domain" {
   type        = string
-  description = Serverdomain
+  description = "Serverdomain"
 }
 
 variable "user" {
   type        = string
-  description = Username
+  description = "Username"
 }
 
 variable "email" {
   type        = string
-  description = Email
+  description = "Email"
 }

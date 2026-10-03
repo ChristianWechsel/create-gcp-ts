@@ -93,6 +93,7 @@ The CLI will guide you through interactive prompts:
    - Scaffold the `server` project and review configuration in `.env` and `terraform.tfvars` using the values from `server-infrastructure`.
    - Run `terraform init && terraform apply` to provision the VPC, static IP, and Compute Engine VM.
    - Point your DNS A-record to the generated `vm_public_ip`.
+   - Ensure a container image has been built and pushed to Artifact Registry (e.g. via Cloud Build CI/CD).
    - Run the generated `ssl_init_command` (`gcloud compute ssh ... --tunnel-through-iap --command="sudo /opt/<app-name>/init.sh"`) to acquire the TLS certificate and launch the container stack without exposing SSH port 22.
 
 ---

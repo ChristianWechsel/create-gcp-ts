@@ -5,5 +5,5 @@
 terraform*
 !terraform.tfvars.example
 !terraform.tfvars.template
-.env.*
+.env
 !.env.example

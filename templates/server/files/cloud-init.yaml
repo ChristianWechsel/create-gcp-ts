@@ -48,14 +48,14 @@ runcmd:
   - apt-get update
   - apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-  - su - $${user} -c "gcloud auth configure-docker $${location}-docker.pkg.dev --quiet"
+  - su - ${user} -c "gcloud auth configure-docker ${location}-docker.pkg.dev --quiet"
 
   # Docker aktivieren und Rechte setzen
   - systemctl enable docker
   - systemctl start docker
-  - usermod -aG docker $${user}
-  - chown -R $${user}:$${user} /opt/$${app_name}
+  - usermod -aG docker ${user}
+  - chown -R ${user}:${user} /opt/${app_name}
 
   # Webroot-Verzeichnis für Certbot vorbereiten
   - mkdir -p /var/www/certbot
-  - chown -R $${user}:$${user} /var/www/certbot
+  - chown -R ${user}:${user} /var/www/certbot

@@ -151,6 +151,8 @@ In your DNS provider (e.g. Cloudflare, Route53, Namecheap):
 
 #### Step 2: Initialize SSL and Start Application
 
+> **Important:** Run `init.sh` (or `ssl_init_command`) only **after** a container image has been built and pushed to Artifact Registry (e.g. triggered via Cloud Build CI/CD on Git push). The script starts `docker compose up -d`, which pulls this image and will fail if no image is present in the registry yet.
+
 Run the command generated in Terraform output `ssl_init_command` directly from your local terminal:
 
 ```shell
@@ -175,6 +177,13 @@ Once connected, you can inspect logs and Docker status:
 ```shell
 # View cloud-init bootstrap progress
 sudo tail -f /var/log/cloud-init-output.log
+sudo cloud-init status
+cat /var/log/cloud-init-output.log
+groups <User>
+docker ps
+
+# vm löschen und neu aufbauen, um cloud-build neu zu triggern
+terraform apply -replace="google_compute_instance.app_vm"
 
 # Check running containers
 sudo docker ps

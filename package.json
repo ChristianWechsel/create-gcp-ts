@@ -1,6 +1,6 @@
 {
   "name": "@christian-wechsel/create-gcp-ts",
-  "version": "0.6.14",
+  "version": "0.6.15",
   "description": "CLI to scaffold TypeScript projects for Google Cloud.",
   "keywords": [
     "create",

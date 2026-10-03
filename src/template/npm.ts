@@ -19,7 +19,7 @@ export function installDependencies(target: string, npmInstall: NPMInstall) {
 
   if (npmInstall.devDependencies.length > 0) {
     executeShell(
-      `npm install --save-dev${npmInstall.devDependencies.join(" ")}`,
+      `npm install --save-dev ${npmInstall.devDependencies.join(" ")}`,
       {
         cwd: target,
       },

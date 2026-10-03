@@ -1,36 +1,11 @@
 import { input } from "@inquirer/prompts";
 import { ServerConfig } from "../types.js";
+import { validateStringLength } from "./validate.js";
 
-export function validateStringLength(
-  value: string,
-  fieldName: string,
-  min: number,
-  max: number,
-): true | string {
-  const trimmed = value.trim();
-
-  if (trimmed.length === 0) {
-    return `${fieldName} must not be empty.`;
-  }
-
-  if (trimmed.length < min) {
-    return `${fieldName} must be at least ${min} ${min === 1 ? "character" : "characters"} long.`;
-  }
-
-  if (trimmed.length > max) {
-    return `${fieldName} must not exceed ${max} characters.`;
-  }
-
-  return true;
-}
-
-export async function serverConfigInput(
-  appName: string,
-): Promise<ServerConfig> {
-  const scope = await input({
-    message: "Project scope:",
-    validate: (value) => validateStringLength(value, "Scope", 1, 214),
-  });
+export async function serverConfigInput(params: {
+  appName: string;
+  scope: string;
+}): Promise<ServerConfig> {
   const projectId = await input({
     message: "Google Cloud project ID:",
     validate: (value) => validateStringLength(value, "Project ID", 6, 30),
@@ -62,12 +37,12 @@ export async function serverConfigInput(
   });
 
   return {
-    app: { name: appName.trim(), domain: domain.trim() },
+    app: { name: params.appName.trim(), domain: domain.trim() },
     user: { name: userName.trim(), email: userEmail.trim() },
     googleCloud: {
       location: location.trim(),
       projectId: projectId.trim(),
-      repository: { scope: scope.trim(), name: repositoryName.trim() },
+      repository: { scope: params.scope.trim(), name: repositoryName.trim() },
       bucketName: bucketName.trim(),
     },
   };

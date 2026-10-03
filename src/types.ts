@@ -7,6 +7,7 @@ export type ProjectType =
 
 export type Template = {
   name: string;
+  scope: string;
   type: ProjectType;
   folders: {
     target: string;

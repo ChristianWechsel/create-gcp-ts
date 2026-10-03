@@ -3,12 +3,14 @@ import { ProjectType, Template } from "../types.js";
 
 export function templateSelection(params: {
   name: string;
+  scope: string;
   type: ProjectType;
   targetFolder: string;
 }): Template {
-  const { name, type, targetFolder } = params;
+  const { name, scope, type, targetFolder } = params;
   return {
     name,
+    scope,
     type,
     folders: {
       target: targetFolder,

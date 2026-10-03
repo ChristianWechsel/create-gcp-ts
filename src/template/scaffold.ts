@@ -29,7 +29,7 @@ export function scaffold(template: Template, serverConfig?: ServerConfig) {
   } = loadConfiguration(template);
 
   const settings: NpmConfigurationEntry[] = [
-    { key: "name", value: template.name },
+    { key: "name", value: `${template.scope}/${template.name}` },
   ];
 
   Object.entries(contentNpmPackageParamsFile ?? []).forEach(([key, value]) => {

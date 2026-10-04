@@ -4,10 +4,6 @@ steps:
     args: ["audit", "--audit-level=high"]
 
   - name: "node:24"
-    entrypoint: "npx"
-    args: ["google-artifactregistry-auth"]
-
-  - name: "node:24"
     entrypoint: "npm"
     args: ["ci"]
 
@@ -24,9 +20,8 @@ steps:
         echo "$$VERSION" > /workspace/_version.txt
         echo "Building version $$VERSION"
 
-  - name: "gcr.io/cloud-builders/gcloud"
+  - name: "gcr.io/cloud-builders/docker"
     entrypoint: "bash"
-    secretEnv: ["NPM_TOKEN"]
     args:
       - "-c"
       - |

@@ -32,7 +32,10 @@ Before using the generated projects with Google Cloud and Terraform, ensure you 
    ```
 
 3. **Terraform**: `>= 1.5.0` installed.
-4. **GitHub Connection in Cloud Build**: A Cloud Build 2nd Gen host connection to your GitHub repository in your GCP project.
+4. **Cloud Build 2nd Gen GitHub Connection**: For any template using automated build triggers (`lib`, `node-project`, `cloud-run`), your GitHub account and target repository must be connected to GCP Cloud Build (2nd Gen). This connection must be authorized in GitHub:
+   - Create a 2nd Gen host connection in **GCP Console** > **Cloud Build** > **Repositories**.
+   - Authorize and install the **Google Cloud Build GitHub App** on your GitHub account or organization.
+   - Link the target GitHub repository under this connection so that Cloud Build receives push and tag webhook events.
 
 ---
 
@@ -60,6 +63,7 @@ The CLI will guide you through interactive prompts:
    - **`gcp-infrastructure`**: Shared GCP baseline infrastructure for NPM libraries (Artifact Registry NPM repo, Cloud Build Service Account, and IAM bindings).
    - **`server-infrastructure`**: Dedicated GCP project baseline for hosting servers (GCP project creation, enabled APIs, Artifact Registry Docker repository, Firestore native DB, Storage bucket, and Cloud Build SA).
    - **`server`**: Production-ready Express backend with Docker, Nginx reverse proxy, Certbot TLS, Firestore, and Compute Engine VM via IAP SSH.
+   - **`cloud-run`**: Serverless Express microservice container on Google Cloud Run with autoscaling, IAM runtime identity, and Cloud Build CI/CD.
 
 ---
 
@@ -72,6 +76,7 @@ The CLI will guide you through interactive prompts:
 | **`gcp-infrastructure`** | Central GCP infrastructure setup for libraries | Creates shared Artifact Registry NPM repo, Cloud Build Service Account, and required IAM roles once per GCP project. |
 | **`server-infrastructure`** | Central GCP project baseline for server workloads | Creates a new GCP project, links billing, enables core APIs, provisions Artifact Registry Docker repository, Firestore DB, Storage bucket, and build service accounts. Outputs shared configuration for server instances. |
 | **`server`** | Express TypeScript backend server | Complete containerized Express stack with Docker Compose and Nginx reverse proxy, Compute Engine VM, custom VPC, IAP-secured SSH, automated TLS via `init.sh`, and local emulator/adapter fallbacks. |
+| **`cloud-run`** | Serverless microservice on Cloud Run | Express HTTP service containerized with multi-stage Docker, autoscaling (Cloud Run v2), least-privilege runtime service account, public invoker access, and Cloud Build automated CI/CD pipeline. Relies on `server-infrastructure`. |
 
 ---
 
@@ -80,9 +85,10 @@ The CLI will guide you through interactive prompts:
 ### Libraries & Node Projects (`lib`, `node-project`)
 
 1. First provision the shared library infrastructure once per GCP project using **`gcp-infrastructure`**.
-2. Scaffold your `lib` or `node-project`.
-3. Install dependencies (`npm install`).
-4. Configure `terraform.tfvars` from `terraform.tfvars.example` and run `terraform init && terraform apply` to deploy Cloud Build triggers.
+2. Connect your GitHub account and repository via Cloud Build 2nd Gen (authorized in GitHub via the Google Cloud Build GitHub App).
+3. Scaffold your `lib` or `node-project`.
+4. Install dependencies (`npm install`).
+5. Configure `terraform.tfvars` from `terraform.tfvars.example` and run `terraform init && terraform apply` to deploy Cloud Build triggers.
 
 ### Server Deployments (`server-infrastructure`, `server`)
 
@@ -95,6 +101,20 @@ The CLI will guide you through interactive prompts:
    - Point your DNS A-record to the generated `vm_public_ip`.
    - Ensure a container image has been built and pushed to Artifact Registry (e.g. via Cloud Build CI/CD).
    - Run the generated `ssl_init_command` (`gcloud compute ssh ... --tunnel-through-iap --command="sudo /opt/<app-name>/init.sh"`) to acquire the TLS certificate and launch the container stack without exposing SSH port 22.
+
+### Cloud Run Deployments (`server-infrastructure`, `cloud-run`)
+
+1. **Create the Project Baseline (`server-infrastructure`)**:
+   - Run `terraform init && terraform apply` to create the GCP project, enable APIs, and provision the Artifact Registry Docker repository and Cloud Build service account.
+   - Note the outputs with `terraform output` (`project_id`, `location`, `docker_repository`, `cloudbuild_service_account`).
+2. **Connect GitHub to Cloud Build 2nd Gen**:
+   - In GCP Cloud Build > Repositories (2nd Gen), create a host connection and authorize the Google Cloud Build GitHub App on your GitHub account/organization.
+   - Link the target GitHub repository under this connection.
+3. **Deploy the Cloud Run Service (`cloud-run`)**:
+   - Scaffold the `cloud-run` project.
+   - Populate `terraform.tfvars` from `terraform.tfvars.example` using the outputs from `server-infrastructure` alongside your GitHub connection details.
+   - Run `terraform init && terraform apply` to provision the Cloud Run service, the dedicated runtime IAM identity, and the Cloud Build trigger.
+   - Push code to your configured branch to trigger the automated build, container push to Artifact Registry, and zero-downtime deployment to Cloud Run.
 
 ---
 

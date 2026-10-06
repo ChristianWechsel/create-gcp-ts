@@ -3,7 +3,8 @@ export type ProjectType =
   | "node-project"
   | "lib"
   | "server-infrastructure"
-  | "server";
+  | "server"
+  | "cloud-run";
 
 export type Template = {
   name: string;

@@ -30,6 +30,11 @@ export function typeSelection() {
         value: "server-infrastructure",
         description: "Server Infrastructure",
       },
+      {
+        name: "cloud-run",
+        value: "cloud-run",
+        description: "Cloud Run",
+      },
     ],
   });
 }

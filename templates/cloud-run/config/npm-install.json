@@ -1,0 +1,10 @@
+{
+  "dependencies": ["express"],
+  "devDependencies": [
+    "@types/express",
+    "@types/jest",
+    "@types/node",
+    "jest",
+    "typescript"
+  ]
+}

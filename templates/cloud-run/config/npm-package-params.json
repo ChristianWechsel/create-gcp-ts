@@ -17,6 +17,5 @@
   "scripts.test:int": "set NODE_ENV=test && npm run build-test && jest --selectProjects Integration",
   "scripts.test": "npm run build-test && jest",
   "scripts.debug": "NODE_ENV=development node --inspect-brk dist/index.js",
-  "scripts.dev": "NODE_ENV=development tsx watch src/index.ts",
   "scripts.start": "NODE_ENV=production node dist/index.js"
 }

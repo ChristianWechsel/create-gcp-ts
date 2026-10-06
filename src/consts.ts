@@ -8,6 +8,7 @@ const SERVER = "server";
 const CONFIG = "config";
 const FILES = "files";
 const SERVER_INFRA = "server-infrastructure";
+const CLOUD_RUN = "cloud-run";
 
 const PATH_ROOT = resolve(import.meta.dirname, "..");
 const PATH_TEMPLATES = resolve(PATH_ROOT, "templates");
@@ -16,6 +17,7 @@ const PATH_NODE_PROJECT = resolve(PATH_TEMPLATES, NODE_PROJECT);
 const PATH_LIB = resolve(PATH_TEMPLATES, LIB);
 const PATH_SERVER = resolve(PATH_TEMPLATES, SERVER);
 const PATH_SERVER_INFRA = resolve(PATH_TEMPLATES, SERVER_INFRA);
+const PATH_CLOUD_RUN = resolve(PATH_TEMPLATES, CLOUD_RUN);
 
 export const CONFIG_FOLDERS: Record<ProjectType, string> = {
   "gcp-infrastructure": resolve(PATH_GCP_INFRA, CONFIG),
@@ -23,6 +25,7 @@ export const CONFIG_FOLDERS: Record<ProjectType, string> = {
   lib: resolve(PATH_LIB, CONFIG),
   server: resolve(PATH_SERVER, CONFIG),
   "server-infrastructure": resolve(PATH_SERVER_INFRA, CONFIG),
+  "cloud-run": resolve(PATH_CLOUD_RUN, CONFIG),
 };
 
 export const FILES_FOLDERS: Record<ProjectType, string> = {
@@ -31,6 +34,7 @@ export const FILES_FOLDERS: Record<ProjectType, string> = {
   lib: resolve(PATH_LIB, FILES),
   server: resolve(PATH_SERVER, FILES),
   "server-infrastructure": resolve(PATH_SERVER_INFRA, FILES),
+  "cloud-run": resolve(PATH_CLOUD_RUN, FILES),
 };
 
 export const NPM_INSTALL_FILE = "npm-install.json";

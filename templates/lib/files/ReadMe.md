@@ -63,7 +63,17 @@ Also update the [LICENSE](LICENSE) file with the current year and your name or o
 
 ### 3. Setup GCP Cloud Build Triggers (Terraform)
 
-This repository includes Terraform configuration to create the Cloud Build triggers that run your CI/CD pipeline.
+This repository includes Terraform configuration to create the Cloud Build triggers that run your CI/CD pipeline on branch pushes and tag releases.
+
+#### Prerequisite: Cloud Build 2nd Gen GitHub Connection
+
+For Cloud Build triggers to respond to Git push events, your GitHub account and repository must be connected to Google Cloud Build (2nd Gen). This connection must be authorized in GitHub:
+
+1. In **Google Cloud Console** > **Cloud Build** > **Repositories** (under **2nd gen**), click **Create host connection**.
+2. Follow the prompt to install and authorize the **Google Cloud Build GitHub App** on your GitHub account or organization.
+3. Click **Link repository** to connect your specific GitHub repository to this host connection.
+
+#### Provisioning the Triggers
 
 1. **Copy the example variables file:**
 
@@ -72,6 +82,16 @@ This repository includes Terraform configuration to create the Cloud Build trigg
    ```
 
 2. **Fill in your environment details in `terraform.tfvars`:**
+   - `project_id`: GCP Project ID.
+   - `location`: GCP region (e.g., `europe-west3`).
+   - `github_connection_name`: Name of the Cloud Build 2nd Gen host connection.
+   - `github_repo_name`: Name of the linked repository.
+   - `target_branch`: Git branch that triggers CI/CD builds on push (e.g., `main`).
+   - `account_id`: Service Account ID for Cloud Build.
+   - `gcp_repository_name`: Repository identifier in Cloud Build (`<github_owner>-<github_repo_name>`).
+   - `npm_scope`: NPM scope (e.g., `@my-org`).
+   - `npm_repository_id`: Artifact Registry repository ID for NPM packages.
+   - `npm_secret_name`: Secret Manager secret name for the NPM token.
 
 3. **Deploy the triggers:**
 

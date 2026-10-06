@@ -1,6 +1,6 @@
 # Google Cloud Project Baseline Infrastructure for Server Deployments
 
-This Terraform project provisions a dedicated Google Cloud Platform (GCP) project and the baseline cloud resources required to host and run backend server workloads (such as instances scaffolded with the `server` template).
+This Terraform project provisions a dedicated Google Cloud Platform (GCP) project and the baseline cloud resources required to host and run backend server workloads (such as instances scaffolded with the `server` or `cloud-run` templates).
 
 ---
 
@@ -138,12 +138,22 @@ terraform output
 
 ---
 
-## Using This Infrastructure with Server Templates
+## Using This Infrastructure with Server & Cloud Run Templates
 
 This project serves as the foundational GCP environment. Once provisioned, you can deploy server workloads into this project:
 
-- Reuse the outputs listed above to populate `terraform.tfvars`, `.env`, and `.npmrc` in your server instances.
-- Deploy virtual machines, VPC networking, containers, and application configs on top of this established project baseline.
+- Reuse the outputs listed above to populate `terraform.tfvars`, `.env`, and `.npmrc` in your `server` or `cloud-run` instances.
+- Deploy virtual machines, VPC networking, Cloud Run services, containers, and application configs on top of this established project baseline.
+
+### Setting Up Cloud Build 2nd Gen GitHub Connection
+
+For workloads with automated Git push triggers (such as `cloud-run`):
+
+1. In **Google Cloud Console** > **Cloud Build** > **Repositories** (under **2nd gen**), click **Create host connection**.
+2. Select your region and enter a connection name (e.g., `my-github-connection`).
+3. Follow the prompt to install and authorize the **Google Cloud Build GitHub App** on your GitHub account or organization.
+4. Click **Link repository** to link your target repository under this connection.
+5. Provide this connection name and repository details in the workload template's `terraform.tfvars`.
 
 ---
 

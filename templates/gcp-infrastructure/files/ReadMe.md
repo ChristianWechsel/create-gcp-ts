@@ -78,12 +78,13 @@ echo -n "npm_YourNpmAutomationTokenHere" | gcloud secrets versions add npm-token
 
 ### 2. Set Up Cloud Build 2nd Gen GitHub Connection
 
-To allow Cloud Build triggers in individual repositories to listen to GitHub push events:
+To allow Cloud Build triggers in individual repositories to listen to GitHub push events, your GitHub account and repositories must be connected:
 
 1. Navigate to **Google Cloud Console** > **Cloud Build** > **Repositories**.
 2. Under **2nd gen**, click **Create host connection**.
 3. Select your region (e.g., `europe-west3`) and specify a connection name (e.g., `my-github-connection`).
-4. Follow the prompt to install/authorize the Google Cloud Build GitHub App on your GitHub account or organization.
+4. Follow the prompt to install and authorize the **Google Cloud Build GitHub App** on your GitHub account or organization.
+5. Click **Link repository**, select your host connection, and choose the target GitHub repository to link it. This grants Cloud Build permission to listen to repository push and release events.
 
 ---
 

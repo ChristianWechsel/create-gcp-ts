@@ -37,8 +37,18 @@ variable "github_repo_name" {
   type        = string
   description = "Name of repository on github"
 }
-chmod +x dist/index.js
+
 variable "connection_name_gcp_github" {
   type        = string
   description = "Name of the connection from github to gcp (manually created beforhand)"
+}
+
+variable "storage_bucket_name" {
+  type       = string
+  description = "GCP Storage Bucket name"
+}
+
+variable "secret_name" {
+  type       = string
+  description = "Name of secret storing API-Key"
 }

@@ -127,7 +127,29 @@ Populate `terraform.tfvars` using the outputs from your **`server-infrastructure
 
 > **Security Note:** `terraform.tfvars` contains local infrastructure configuration and is excluded by `.gitignore`. Do not commit this file to Git.
 
-### 4. Deploy Infrastructure (Terraform)
+### 4. Create the API Key Secret
+
+Create the Secret Manager secret before applying Terraform, because the Cloud Run service reads the API key from this secret:
+
+```shell
+# Set these to the values in terraform.tfvars
+PROJECT_ID="<PROJECT_ID>"
+SECRET_NAME="<SECRET_NAME>"
+
+# Generate an API key and keep it in a shell variable
+API_KEY="$(openssl rand -base64 32)"
+
+# Create the secret before Terraform applies the Cloud Run service
+gcloud secrets create "$SECRET_NAME" --project="$PROJECT_ID"
+
+# Add the generated API key as a secret version
+printf '%s' "$API_KEY" | gcloud secrets versions add "$SECRET_NAME" --data-file=- --project="$PROJECT_ID"
+unset API_KEY
+```
+
+Replace `<SECRET_NAME>` and `<PROJECT_ID>` with the `secret_name` and `project_id` values from `terraform.tfvars` before running the commands.
+
+### 5. Deploy Infrastructure (Terraform)
 
 Initialize Terraform and apply the configuration to create the Cloud Run service, runtime IAM identity, and Cloud Build trigger:
 
@@ -136,7 +158,7 @@ terraform init
 terraform apply
 ```
 
-### 5. Inspect Service & Deployment
+### 6. Inspect Service & Deployment
 
 Retrieve the deployed Cloud Run service URL and status:
 
@@ -149,9 +171,39 @@ gcloud run services list
 
 # Inspect detailed service settings
 gcloud run services describe <SERVICE_NAME> --region <REGION>
+
+# Display and run the deployment command for the latest image
+terraform output cloud_run_deploy_command
+terraform output -raw cloud_run_deploy_command | sh
 ```
 
 When code is pushed to your configured trigger branch (e.g., `main`), Cloud Build automatically tests the code, builds the container image, pushes it to Artifact Registry, and deploys the new revision to Cloud Run.
+
+### 7. Call the Image Resizer
+
+List the secret and its versions to find the secret name (`<KEY>`) and version (`<VERSION>`). Then export the API key and Cloud Run URL and send an image:
+
+```shell
+# Find the secret name and version
+gcloud secrets list
+gcloud secrets versions list <KEY>
+
+# Access the API key and configure the request
+export API_KEY="$(gcloud secrets versions access <VERSION> --secret=<KEY>)"
+export BASE_URL="$(terraform output --raw cloud_run_url)"
+export OUTPUT=output.png
+export INPUT=input.png
+
+# Resize the image
+curl --show-error -X POST \
+  -H "Content-Type: image/png" \
+  -H "Authorization: Bearer ${API_KEY}" \
+  --data-binary "@${INPUT}" \
+  --output "${OUTPUT}" \
+  "${BASE_URL%/}/resize"
+```
+
+Avoid printing the API key in shared terminals or logs. The Cloud Run service uses the latest Secret Manager version, so add a new version and redeploy the service if you rotate the key.
 
 ---
 

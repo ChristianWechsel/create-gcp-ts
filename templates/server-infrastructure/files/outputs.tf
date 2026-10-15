@@ -24,6 +24,6 @@ output "storage_bucket_name" {
 }
 
 output "service_account_cloud_build" {
-  value       = google_service_account.account_id
+  value       = google_service_account.cloudbuild_custom_sa.account_id
   description = "GCP Service Account ID of Cloud Build"
 }

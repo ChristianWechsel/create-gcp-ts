@@ -86,6 +86,10 @@ terraform apply
 
 Review the planned execution and confirm with `yes`.
 
+### 4. Budget
+
+Set budget cap to limit spending
+
 ---
 
 ## Verification
@@ -110,6 +114,14 @@ gcloud artifacts repositories list --project=<PROJECT_ID>
 
 # Check Cloud Storage bucket
 gcloud storage buckets list --project=<PROJECT_ID>
+christian@christian-Z390-M-GAMING:~/Programmierung/baustrom/cloud_infra$ terraform apply
+╷
+│ Error: Reference to undeclared resource
+│ 
+│   on outputs.tf line 27, in output "service_account_cloud_build":
+│   27:   value       = google_service_account.account_id
+│ 
+│ A managed resource "google_service_account" "account_id" has not been declared in the root module.
 
 # Check Cloud Build service account
 gcloud iam service-accounts list --project=<PROJECT_ID>

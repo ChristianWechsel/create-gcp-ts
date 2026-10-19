@@ -1,5 +1,6 @@
 import type { Logger } from "@christian-wechsel/logger";
 import { ConsoleLogger } from "@christian-wechsel/logger";
+import { RequestLogger } from "@christian-wechsel/logger-middleware";
 import { Firestore } from "@google-cloud/firestore";
 import { createEnv } from "./core/env.js";
 import { SecretManager } from "./core/secrets.js";
@@ -21,3 +22,5 @@ export const storage = new GoogleCloudStorage(
   env.getValue("BUCKET_NAME"),
   logger,
 );
+
+export const requestLogger = new RequestLogger(logger);

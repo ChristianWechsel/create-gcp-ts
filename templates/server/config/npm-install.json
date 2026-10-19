@@ -1,5 +1,6 @@
 {
   "dependencies": [
+    "@christian-wechsel/logger-middleware",
     "@christian-wechsel/typed-env-handler",
     "@christian-wechsel/logger",
     "@google-cloud/firestore",

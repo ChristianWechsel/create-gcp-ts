@@ -1,8 +1,8 @@
 import type { Logger } from "@christian-wechsel/logger";
 import express from "express";
 import helmet from "helmet";
+import { requestLogger } from "./container.js";
 import type { Database } from "./database/db.js";
-import { createRequestLogger } from "./middleware/request-logger.js";
 import { createHelloWorldRouter } from "./routes/hello-world.js";
 
 export async function createApp(
@@ -21,7 +21,7 @@ export async function createApp(
       },
     }),
   );
-  app.use(createRequestLogger(logger));
+  app.use(requestLogger.createRequestLogger());
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(express.static("public"));
